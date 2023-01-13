@@ -1,0 +1,7 @@
+.env
+venv
+utils/dbConfig.js
+utils/posts.mongodb
+__pycache__
+.vscode
+client_secret_323144974129-iinm0onokp2a39oca0f774h58g56cs09.apps.googleusercontent.com.json
