@@ -1,0 +1,56 @@
+use("postgram")
+
+db.createCollection("post",{
+  "validator":{
+    $jsonSchema:{
+      "bsonType":"object",
+      "description":"Document that stores post data",
+      "required":["text","background","user"],
+      "properties":
+      {
+                "text":{
+                    "bsonType":"string",
+                    "description":"text must be a string and is required"
+                },
+                "background":{
+                    "bsonType":"string",
+                    "description":"Background must be a string and is required"
+                },
+                "font":{
+                    "bsonType":"string",
+                    "description":"Font must be a string"
+                },
+                "user":{
+                    "bsonType":"string",
+                    "description":"User must be a string and is required"
+                },
+                "comments":{
+                    "bsonType":"array",
+                    "description":"Comments must be an array of comment ids",
+                    "uniqueItems":true,
+                    "items":{
+                        "bsonType":"string"
+                    }
+                },
+                "likes":{
+                    "bsonType":"array",
+                    "description":"Likes must be an array of user ids",
+                    "uniqueItems":true,
+                    "items":{
+                        "bsonType":"string"
+                    }
+                },
+                "tag":{
+                    "bsonType":"array",
+                    "description":"tag must be an array of tag ids",
+                    "uniqueItems":true,
+                    "items":{
+                        "bsonType":"string"
+                    }
+                }
+            }
+        }
+  }
+})
+
+
