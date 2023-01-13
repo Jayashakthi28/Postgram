@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Feed from "./pages/Feed";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
@@ -11,24 +11,41 @@ import { api } from "./utils/api";
 import Registeration from "./pages/Registeration";
 import Header from "./components/Header";
 import Notification from "./pages/Notification";
+import Loading from "./components/Loading";
 
 function App() {
   const [headerValue, setHeaderValue] = useState("home");
   const { user, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
-  // if (isLoading) {
-  //   return <ReactLoading color="#ffffff"></ReactLoading>;
-  // }
-  // if (!isLoading && !isAuthenticated) {
-  //   loginWithRedirect();
-  // }
-  // if (!isLoading && isAuthenticated) {
-  //   let userdata = {};
-  //   userdata["email"] = user["email"];
-  //   userdata["name"] = user["name"];
-  //   userdata["email_verified"] = user["email_verified"];
-  //   api.setEmail(user["email"]);
-  //   api.setUserData(userdata);
-  // }
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    async function fetchRegister() {
+      if (!isLoading && isAuthenticated) {
+        if (!api.getUserData()["email_verified"]) {
+          navigate("verify");
+        }
+        let apiResponse = await api.get("/isregister");
+        if (api.getUserData()["email_verified"] && apiResponse.status === "not registered") {
+          navigate("register");
+        }
+      }
+    }
+    fetchRegister();
+  }, [isLoading, location.pathname]);
+  if (isLoading) {
+    return <Loading />;
+  }
+  if (!isLoading && !isAuthenticated) {
+    loginWithRedirect();
+  }
+  if (!isLoading && isAuthenticated) {
+    let userdata = {};
+    userdata["email"] = user["email"];
+    userdata["name"] = user["name"];
+    userdata["email_verified"] = user["email_verified"];
+    api.setEmail(user["email"]);
+    api.setUserData(userdata);
+  }
   return (
     <Routes>
       <Route
@@ -40,8 +57,9 @@ function App() {
         <Route index element={<Feed />} />
         <Route path="search" element={<Search />} />
         <Route path="profile" element={<Profile />} />
-        <Route path="notification" element={<Notification/>}></Route>
+        <Route path="notification" element={<Notification />} />
         <Route path="register" element={<Registeration />} />
+        <Route path="verify" element={<EmailVerify />} />
       </Route>
     </Routes>
   );
