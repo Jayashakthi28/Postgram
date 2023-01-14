@@ -3,5 +3,5 @@ from utils.isRegistered import is_registerd
 
 class IsRegistered(Resource):
     @is_registerd
-    def get(self):
+    def get(email,self):
         return {"status":"registered"},200
