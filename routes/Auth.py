@@ -13,35 +13,34 @@ def signupUtil(data):
         email=data["email"]
         username=data["username"]
         name=data["name"]
+        tags=data["tags"]
         json_data={
             "name":name,
             "email":email,
             "username":username,
+            "tags":tags,
             "date_created":str(datetime.utcnow())
             }
         insertOne("user",json_data)
         
 
-def usernameGenerator(name,type_of_inp):
-    new_name=""
-    if(type_of_inp!="email"):
-        new_name=str(name).lower()
-    else:
-        local, at, domain = str(name).rpartition('@')
-        new_name=str(local)
+def usernameGenerator(name):
+    new_name=str(name).lower()
+    print(new_name)
     user_name="".join(ch for ch in new_name if ch.isalnum())
     user_name+=str(randint(1000,9999))
     res=findOne("user",{"username":user_name})
     if(not res):
         return user_name
     else:
-        return usernameGenerator(name,type_of_inp)
+        return usernameGenerator(name)
 
 def userDataGenerator(data):
     mainData={}
     mainData["email"]=data["email"]
     mainData["name"]=data["name"]
-    mainData["username"]=usernameGenerator(data["name"],"name")
+    mainData["username"]=usernameGenerator(data["name"])
+    mainData["tags"]=data["tags"]
     return mainData
 
 def isRegistered(email):
@@ -57,6 +56,6 @@ class Register(Resource):
             data=request.json
             mainData=userDataGenerator(data)
             signupUtil(mainData)
-            return {"status":"Registered Successfully"},200
+            return {"status":"success"},200
         return {"status":"Already registerd"},200
 
