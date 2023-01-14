@@ -25,8 +25,16 @@ function App() {
           navigate("verify");
         }
         let apiResponse = await api.get("/isregister");
-        if (api.getUserData()["email_verified"] && apiResponse.status === "not registered") {
-          navigate("register");
+        if (api.getUserData()["email_verified"] ) {
+          if(location.pathname==="/verify"){
+            navigate("/");
+          }
+          if(apiResponse.status === "not registered"){
+            navigate("register");
+          }
+          else if(apiResponse.status==="registered" && location.pathname==="/register"){
+            navigate("/");
+          }
         }
       }
     }
