@@ -30,7 +30,12 @@ export default function Header({ headerValue, setHeaderValue }) {
           PostGram!
         </Typography>
         {isNav && (
-          <Tabs value={headerValue} centered>
+          <Tabs
+            value={headerValue}
+            centered
+            indicatorColor="secondary"
+            textColor="secondary"
+          >
             <Tab
               value="home"
               icon={<HomeIcon fontSize="large" className=" text-black" />}
