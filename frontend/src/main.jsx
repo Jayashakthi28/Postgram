@@ -10,6 +10,14 @@ const theme = createTheme({
   typography: {
     fontFamily: ["Bubbler"].join(","),
   },
+  palette: {
+    primary: {
+      main: "rgb(216 180 254)",
+    },
+    secondary: {
+      main: "#000",
+    },
+  },
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
