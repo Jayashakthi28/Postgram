@@ -114,7 +114,7 @@ export default function Registeration() {
           onChange={(e) => {
             inputHandler(e.target.value, "name");
           }}
-          color="secondary"
+          color="primary"
           className=" !my-1"
           disabled={formApiSubmit}
         />
@@ -123,7 +123,7 @@ export default function Registeration() {
           label="Email"
           variant="outlined"
           required
-          color="secondary"
+          color="primary"
           className=" !my-1"
           disabled
           value={formData.email}
@@ -152,7 +152,7 @@ export default function Registeration() {
         />
         <Button
           variant="outlined"
-          color="secondary"
+          color="primary"
           className=" self-center !my-1"
           disabled={!allOk || formApiSubmit}
           onClick={formSubmitter}
