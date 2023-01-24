@@ -3,6 +3,26 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: "Bubbler";
-    src: url(./assets/Fonts/BubblerOne-Regular.ttf);
+  font-family: "Bubbler";
+  src: url(./assets/Fonts/BubblerOne-Regular.ttf);
+}
+
+@font-face {
+  font-family: "Pacifico";
+  src: url(./assets/Fonts/Pacifico-Regular.ttf);
+}
+
+@font-face {
+  font-family: "Patrick";
+  src: url(./assets/Fonts/PatrickHand-Regular.ttf);
+}
+
+@font-face {
+  font-family: "Righteous";
+  src: url(./assets/Fonts/Righteous-Regular.ttf);
+}
+
+@font-face {
+  font-family: "Sofiasans";
+  src: url(./assets/Fonts/SofiaSans-VariableFont_wght.ttf);
 }
