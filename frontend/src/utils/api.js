@@ -35,14 +35,32 @@ const API = () => {
     "/search": true,
     "/notification": true,
     "/profile": true,
+    "/add": true,
   };
-  const headerJson={
-    "/":"home",
-    "/search":"search",
-    "/notification":"notification",
-    "/profile":"profile"
-  }
-  return { get, post, setEmail, setUserData, getUserData,routeJson,headerJson };
+  const headerJson = {
+    "/": "home",
+    "/search": "search",
+    "/notification": "notification",
+    "/profile": "profile",
+    "/add": "add",
+  };
+  const tabJson = {
+    home: "/",
+    search: "/search",
+    notification: "/notification",
+    profile: "/profile",
+    add: "/add",
+  };
+  return {
+    get,
+    post,
+    setEmail,
+    setUserData,
+    getUserData,
+    routeJson,
+    headerJson,
+    tabJson,
+  };
 };
 
 export const api = API();
