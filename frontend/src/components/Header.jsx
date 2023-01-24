@@ -6,6 +6,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import { Outlet, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
@@ -15,8 +16,12 @@ export default function Header({ headerValue, setHeaderValue }) {
   const location = useLocation();
   const isNav = api.routeJson[location.pathname];
   useEffect(() => {
-    setHeaderValue(api.headerJson[location.pathname] || "home");
+    if (api.headerJson[location.pathname] !== undefined) return;
+    setHeaderValue("home");
   }, [location.pathname]);
+  useEffect(() => {
+    navigate(api.tabJson[headerValue]);
+  }, [headerValue]);
   return (
     <>
       <div className=" backdrop-blur-md bg-purple-300">
@@ -41,7 +46,6 @@ export default function Header({ headerValue, setHeaderValue }) {
               icon={<HomeIcon fontSize="large" className=" text-black" />}
               onClick={() => {
                 setHeaderValue("home");
-                navigate("/");
               }}
             />
             <Tab
@@ -49,7 +53,13 @@ export default function Header({ headerValue, setHeaderValue }) {
               icon={<SearchIcon fontSize="large" className=" text-black" />}
               onClick={() => {
                 setHeaderValue("search");
-                navigate("/search");
+              }}
+            />
+            <Tab
+              value="add"
+              icon={<AddBoxIcon fontSize="large" className=" text-black" />}
+              onClick={() => {
+                setHeaderValue("add");
               }}
             />
             <Tab
@@ -59,7 +69,6 @@ export default function Header({ headerValue, setHeaderValue }) {
               }
               onClick={() => {
                 setHeaderValue("notification");
-                navigate("/notification");
               }}
             />
             <Tab
@@ -67,7 +76,6 @@ export default function Header({ headerValue, setHeaderValue }) {
               icon={<PersonIcon fontSize="large" className=" text-black" />}
               onClick={() => {
                 setHeaderValue("profile");
-                navigate("/profile");
               }}
             />
           </Tabs>
