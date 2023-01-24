@@ -12,6 +12,7 @@ import Registeration from "./pages/Registeration";
 import Header from "./components/Header";
 import Notification from "./pages/Notification";
 import Loading from "./components/Loading";
+import Add from "./pages/Add";
 
 function App() {
   const [headerValue, setHeaderValue] = useState("home");
@@ -25,14 +26,16 @@ function App() {
           navigate("verify");
         }
         let apiResponse = await api.get("/isregister");
-        if (api.getUserData()["email_verified"] ) {
-          if(location.pathname==="/verify"){
+        if (api.getUserData()["email_verified"]) {
+          if (location.pathname === "/verify") {
             navigate("/");
           }
-          if(apiResponse.status === "not registered"){
+          if (apiResponse.status === "not registered") {
             navigate("register");
-          }
-          else if(apiResponse.status==="registered" && location.pathname==="/register"){
+          } else if (
+            apiResponse.status === "registered" &&
+            location.pathname === "/register"
+          ) {
             navigate("/");
           }
         }
@@ -40,6 +43,9 @@ function App() {
     }
     fetchRegister();
   }, [isLoading, location.pathname]);
+  useEffect(() => {
+    setHeaderValue(api.headerJson[location.pathname]);
+  }, [location.pathname]);
   if (isLoading) {
     return <Loading />;
   }
@@ -68,6 +74,7 @@ function App() {
         <Route path="notification" element={<Notification />} />
         <Route path="register" element={<Registeration />} />
         <Route path="verify" element={<EmailVerify />} />
+        <Route path="add" element={<Add />} />
       </Route>
     </Routes>
   );
