@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import { createTheme, ThemeProvider } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const theme = createTheme({
   typography: {
@@ -20,6 +21,8 @@ const theme = createTheme({
   },
 });
 
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Auth0Provider
@@ -27,11 +30,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       clientId={import.meta.env.VITE_AUTH_CLIENT_ID}
       redirectUri={window.location.origin}
     >
-      <ThemeProvider theme={theme}>
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        </ThemeProvider>
+      </QueryClientProvider>
     </Auth0Provider>
   </BrowserRouter>
 );
