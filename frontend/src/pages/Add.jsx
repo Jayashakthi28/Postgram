@@ -5,6 +5,7 @@ import {
   MenuItem,
   Typography,
   Button,
+  Alert,
 } from "@mui/material";
 import Select from "@mui/material/Select";
 import PostBox from "../components/PostBox";
@@ -13,6 +14,10 @@ import { useEffect } from "react";
 import WebFont from "webfontloader";
 import BadWordsFilter from "bad-words";
 import CreatableSelect from "react-select/creatable";
+import { useMutation, useQueryClient } from "react-query";
+import { api } from "../utils/api";
+import ReactLoading from "react-loading";
+import { useRef } from "react";
 
 export default function Add() {
   const [quotes, setquotes] = useState("");
@@ -22,6 +27,10 @@ export default function Add() {
   const [bgColor, setbgColor] = useState("black");
   const [tags, setTags] = useState([]);
   const [inputTag, setInputTag] = useState("");
+  const [alert, setAlert] = useState(true);
+  const queryClient = useQueryClient();
+  const textAreaEle=useRef(null);
+  const mutation = useMutation(() => postUploader());
 
   useEffect(() => {
     WebFont.load({
@@ -39,13 +48,64 @@ export default function Add() {
     switch (event.key) {
       case "Enter":
       case "Tab":
-        setTags((prev) => [...prev, createOption(inputTag)]);
+      case " ":
+        let tagsArray = tags.map((t) => t.value);
+        if (
+          tagsArray.includes(inputTag.trim()) ||
+          inputTag === "" ||
+          inputTag.length === 0 ||
+          inputTag === " "
+        ) {
+          setInputTag("");
+          return;
+        }
+        setTags((prev) => [...prev, createOption(inputTag.trim())]);
         setInputTag("");
         event.preventDefault();
     }
   };
+
+  const postUploader = async () => {
+    let body = {
+      text: quotes,
+      tag: tags.map((t) => t.value),
+      font: font,
+      background: bgColor,
+      fontColor: fontColor,
+    };
+    return api.post("post", body);
+  };
+
+  const reseter = () => {
+    setquotes("");
+    setTags([]);
+    setInputTag("");
+    textAreaEle.current.value="";
+  };
+
+  if (mutation.isSuccess) {
+    queryClient.invalidateQueries("user_post");
+    setTimeout(() => {
+      setAlert(false);
+      mutation.reset();
+      setAlert(true);
+    }, 4000);
+    setTimeout(() => {
+      reseter();
+    }, 100);
+  }
   return (
-    <div className=" flex sm:flex-wrap w-full justify-center h-[calc(100vh-142.27px)] bg-gray-100 sm:bg-white fun relative">
+    <div className=" flex sm:flex-wrap w-full justify-center min-h-[calc(100vh-142.27px)] bg-gray-100 sm:bg-white fun relative">
+      {mutation.isLoading && (
+        <div className=" absolute h-full w-full bg-gray-100 bg-opacity-80 flex flex-col items-center justify-center z-10 transition-all">
+          <ReactLoading type="spin" color="#D8B4FE" />
+        </div>
+      )}
+      {mutation.isSuccess && alert && (
+        <Alert severity="success" className=" absolute z-10 transition-all">
+          Successfully Posted!
+        </Alert>
+      )}
       <div className="w-2/3 sm:w-screen flex justify-evenly flex-col">
         <div className=" flex items-center justify-evenly w-3/4 mx-auto p-3 backdrop-blur bg-white flex-wrap rounded-lg shadow-2xl">
           <FormControl sx={{ minWidth: "100px" }} className=" m-2 w-[143px]">
@@ -81,6 +141,7 @@ export default function Add() {
         <textarea
           placeholder="Enter the qutoes here"
           maxLength="180"
+          ref={textAreaEle}
           className=" w-3/4 rounded p-1 h-[300px] mx-auto bg-white border-[2px] border-transparent resize-none scroll overflow-hidden outline-none shadow-2xl sm:my-3 font-bubbler focus:border-[2px] focus:border-purple-300"
           onInput={(e) => {
             let filterText = "";
@@ -103,8 +164,10 @@ export default function Add() {
             onInputChange={(newValue) => {
               if (tags.length > 3) {
                 setInputTag("");
+              } else if (newValue.length > 12) {
+                setInputTag(inputTag);
               } else {
-                setInputTag(newValue);
+                setInputTag(newValue.replace(/[^a-zA-Z ]/g, ""));
               }
             }}
             onChange={(newValue) => setTags(newValue)}
@@ -147,7 +210,14 @@ export default function Add() {
             fontSize: "1.1rem",
             margin: "1rem",
           }}
-          disabled={quotes.length === 0 || tags.length === 0 ? true : false}
+          disabled={
+            quotes.length === 0 ||
+            tags.length === 0 ||
+            mutation.isLoading === true
+              ? true
+              : false
+          }
+          onClick={mutation.mutateAsync}
         >
           POST
         </Button>
