@@ -6,6 +6,7 @@ import {
   Typography,
   Button,
   Alert,
+  AlertTitle,
 } from "@mui/material";
 import Select from "@mui/material/Select";
 import PostBox from "../components/PostBox";
@@ -95,15 +96,15 @@ export default function Add() {
     }, 100);
   }
   return (
-    <div className=" flex sm:flex-wrap w-full justify-center min-h-[calc(100vh-142.27px)] bg-gray-100 sm:bg-white fun relative">
+    <div className={`flex sm:flex-wrap w-full justify-center min-h-[calc(100vh-142.27px)] ${(alert && mutation.isSuccess)?"bg-white":"bg-gray-100"} sm:bg-white fun relative`}>
       {mutation.isLoading && (
         <div className=" absolute h-full w-full bg-gray-100 bg-opacity-80 flex flex-col items-center justify-center z-10 transition-all">
           <ReactLoading type="spin" color="#D8B4FE" />
         </div>
       )}
       {mutation.isSuccess && alert && (
-        <Alert severity="success" className=" absolute z-10 transition-all">
-          Successfully Posted!
+        <Alert severity="success" className=" absolute z-10 transition-all my-2">
+          <AlertTitle>Successfully Posted!!</AlertTitle>
         </Alert>
       )}
       <div className="w-2/3 sm:w-screen flex justify-evenly flex-col">
