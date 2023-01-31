@@ -14,14 +14,7 @@ import { api } from "../utils/api";
 export default function Header({ headerValue, setHeaderValue }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const isNav = api.routeJson[location.pathname];
-  useEffect(() => {
-    if (api.headerJson[location.pathname] !== undefined) return;
-    setHeaderValue("home");
-  }, [location.pathname]);
-  useEffect(() => {
-    navigate(api.tabJson[headerValue]);
-  }, [headerValue]);
+  const isNav = api.headerMapper(location.pathname, "nav");
   return (
     <>
       <div className=" backdrop-blur-md bg-purple-300">
@@ -46,6 +39,7 @@ export default function Header({ headerValue, setHeaderValue }) {
               icon={<HomeIcon fontSize="large" className=" text-black" />}
               onClick={() => {
                 setHeaderValue("home");
+                navigate("/");
               }}
             />
             <Tab
@@ -53,6 +47,7 @@ export default function Header({ headerValue, setHeaderValue }) {
               icon={<SearchIcon fontSize="large" className=" text-black" />}
               onClick={() => {
                 setHeaderValue("search");
+                navigate("/search");
               }}
             />
             <Tab
@@ -60,6 +55,7 @@ export default function Header({ headerValue, setHeaderValue }) {
               icon={<AddBoxIcon fontSize="large" className=" text-black" />}
               onClick={() => {
                 setHeaderValue("add");
+                navigate("/add");
               }}
             />
             <Tab
@@ -69,6 +65,7 @@ export default function Header({ headerValue, setHeaderValue }) {
               }
               onClick={() => {
                 setHeaderValue("notification");
+                navigate("/notification");
               }}
             />
             <Tab
@@ -76,6 +73,7 @@ export default function Header({ headerValue, setHeaderValue }) {
               icon={<PersonIcon fontSize="large" className=" text-black" />}
               onClick={() => {
                 setHeaderValue("profile");
+                navigate("/profile");
               }}
             />
           </Tabs>

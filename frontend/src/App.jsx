@@ -15,10 +15,13 @@ import Loading from "./components/Loading";
 import Add from "./pages/Add";
 
 function App() {
-  const [headerValue, setHeaderValue] = useState("home");
   const { user, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const navigate = useNavigate();
   const location = useLocation();
+  const [headerValue, setHeaderValue] = useState(
+    api.headerMapper(location.pathname)
+  );
+
   useEffect(() => {
     async function fetchRegister() {
       if (!isLoading && isAuthenticated) {
@@ -42,9 +45,9 @@ function App() {
       }
     }
     fetchRegister();
-  }, [isLoading, location.pathname]);
+  }, [isLoading]);
   useEffect(() => {
-    setHeaderValue(api.headerJson[location.pathname]);
+    setHeaderValue(api.headerMapper(location.pathname));
   }, [location.pathname]);
   if (isLoading) {
     return <Loading />;
@@ -70,7 +73,9 @@ function App() {
       >
         <Route index element={<Feed />} />
         <Route path="search" element={<Search />} />
-        <Route path="profile" element={<Profile />} />
+        <Route path="profile" element={<Profile />}>
+          <Route path=":id" element={<Profile />} />
+        </Route>
         <Route path="notification" element={<Notification />} />
         <Route path="register" element={<Registeration />} />
         <Route path="verify" element={<EmailVerify />} />
