@@ -44,12 +44,17 @@ const API = () => {
     "/profile": "profile",
     "/add": "add",
   };
-  const tabJson = {
-    home: "/",
-    search: "/search",
-    notification: "/notification",
-    profile: "/profile",
-    add: "/add",
+  const headerMapper = (val,isNav=false) => {
+
+    if (headerJson[val]===undefined) {
+      val = val.split("/");
+      return (val[1] === "profile" && !isNav)?(headerJson["/profile"]):(true); 
+    } else if(!isNav){
+      return headerJson[val];
+    }
+    else{
+      return routeJson[val];
+    }
   };
   return {
     get,
@@ -59,7 +64,7 @@ const API = () => {
     getUserData,
     routeJson,
     headerJson,
-    tabJson,
+    headerMapper,
   };
 };
 
