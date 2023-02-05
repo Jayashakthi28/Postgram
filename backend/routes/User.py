@@ -13,6 +13,8 @@ class User(Resource):
             userData = findOne("user", {"email": email})
         else:
             userData = findOne("user", {"username": username})
+            if(not userData):
+                return {"status":"not found"},200
             myUserName= findWithProject("user",{"email":email},{"username":1})
             myUserName=myUserName[0]["username"]
             if(userData.__contains__("followers") and myUserName in userData["followers"]):
