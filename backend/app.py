@@ -11,7 +11,7 @@ from routes.User import User
 from flask_cors import CORS
 
 app=Flask(__name__)
-CORS(app=app,supports_credentials=True)
+CORS(app=app,supports_credentials=True,origins=["http://localhost:*","https://dev-postgram.netlify.app"])
 api=Api(app)
 
 
