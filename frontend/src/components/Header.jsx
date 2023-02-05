@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
@@ -14,7 +14,10 @@ import { api } from "../utils/api";
 export default function Header({ headerValue, setHeaderValue }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const isNav = api.headerMapper(location.pathname, "nav");
+  const [isNav,setIsNav] = useState(false);
+  useEffect(()=>{
+   setIsNav(api.headerMapper(location.pathname, "nav"));
+  },[location.pathname]);
   return (
     <>
       <div className=" backdrop-blur-md bg-purple-300">
