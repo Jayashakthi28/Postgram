@@ -1,4 +1,4 @@
-import { Avatar, Typography, Button } from "@mui/material";
+import { Avatar, Typography, Button, IconButton } from "@mui/material";
 import React from "react";
 import { useParams } from "react-router-dom";
 import * as htmlToImage from "html-to-image";
@@ -6,9 +6,12 @@ import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { api } from "../utils/api";
 import { useQuery } from "react-query";
 import Loading from "../components/Loading";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Profile() {
   const { id } = useParams();
+  const { logout } = useAuth0();
   const stringToColor = (string) => {
     let hash = 0;
     let i;
@@ -31,7 +34,11 @@ export default function Profile() {
         fontSize: "4rem",
         fontWeight: "700",
       },
-      children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+      children: `${name.split(" ")[0][0]}${
+        name.split(" ").length === 1
+          ? name.split(" ")[0][1]
+          : name.split(" ")[1][0]
+      }`,
     };
   };
   const getProfileData = async () => {
@@ -52,9 +59,19 @@ export default function Profile() {
     <>
       {profileData.isLoading ? (
         <Loading />
+      ) : profileData.data.status === "not registered" ||
+        profileData.data.status === "not found" ? (
+        <div className=" flex flex-col justify-center items-center mt-[10%]">
+          <Typography component="h1" variant="h1">
+            😔
+          </Typography>
+          <Typography component="h4" variant="h4">
+            No User Found
+          </Typography>
+        </div>
       ) : (
         <div className=" p-1 bg-gray-100 h-[calc(100vh-142px)]">
-          <div className=" flex w-[500px] mt-5 mx-auto shadow-card hover:shadow-hover transition-all rounded-md p-5 justify-center items-center">
+          <div className=" flex min-w-[500px] max-w-fit mt-5 mx-auto shadow-card hover:shadow-hover transition-all rounded-md p-5 justify-center items-center">
             <Avatar {...stringAvatar(profileData.data.name)} />
             <div className="flex flex-col mx-6">
               <div className=" flex flex-col">
@@ -116,17 +133,29 @@ export default function Profile() {
                   UnFollow
                 </Button>
               ) : (
-                <Button
-                  variant="outlined"
-                  sx={{
-                    marginTop: "10px",
-                    border: "1px solid #a72ef8",
-                    color: "#a72ef8",
-                    fontWeight: "600",
-                  }}
-                >
-                  Edit Profile
-                </Button>
+                <div className=" w-full flex items-center justify-center mt-2">
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      border: "1px solid #a72ef8",
+                      color: "#a72ef8",
+                      fontWeight: "600",
+                      width: "200px",
+                    }}
+                  >
+                    Edit Profile
+                  </Button>
+                  <IconButton
+                    color="primary"
+                    sx={{
+                      marginLeft: "2px",
+                      color: "#b855fa",
+                    }}
+                    onClick={logout}
+                  >
+                    <LogoutIcon />
+                  </IconButton>
+                </div>
               )}
             </div>
           </div>
