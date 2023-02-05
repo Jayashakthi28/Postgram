@@ -77,7 +77,7 @@ export default function EmailVerify() {
           Successfully sent
         </Alert>
       )}
-      <div className=" flex justify-center items-center p-11 backdrop-blur-sm bg-purple-200 flex-col shadow-gray-800 shadow-lg rounded-lg mx-3">
+      <div className=" flex justify-center items-center p-11 backdrop-blur-sm bg-white flex-col shadow-gray-800 shadow-card rounded-lg mx-3">
         <Typography
           variant="h5"
           component="h5"
