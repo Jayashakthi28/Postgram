@@ -45,10 +45,10 @@ const API = () => {
     "/add": "add",
   };
   const headerMapper = (val,isNav=false) => {
-    if(routeJson[val]===false){
+    if(routeJson[val]===false && !isNav){
       return "home";
     }
-    if (headerJson[val]===undefined && !isNav) {
+    if (headerJson[val]===undefined) {
       val = val.split("/");
       return (val[1] === "profile" && !isNav)?(headerJson["/profile"]):(true); 
     } else if(isNav===false){
