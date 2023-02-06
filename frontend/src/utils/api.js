@@ -3,11 +3,18 @@ import axios from "axios";
 const API = () => {
   const url = "http://127.0.0.1:5000";
   let email = "";
+  let username = "";
   let userData = {};
 
   const setUserData = (temData) => {
     userData = temData;
   };
+
+  const setUserName=(temUserName)=>{
+    username=temUserName;
+    axios.defaults.headers.common["username"]=username;
+  }
+
   const setEmail = (temEmail) => {
     email = temEmail;
     setHeader();
@@ -62,6 +69,7 @@ const API = () => {
     get,
     post,
     setEmail,
+    setUserName,
     setUserData,
     getUserData,
     routeJson,
