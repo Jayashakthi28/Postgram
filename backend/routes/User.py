@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from utils.isRegistered import is_registerd
-from utils.db import findOne,findWithProject
-
+from utils.db import findOne,findWithProject,updateOne
+from flask import request
 
 class User(Resource):
 
@@ -29,11 +29,30 @@ class User(Resource):
             "tags":
             len(userData["tags"]),
             "following":
-            len(userData["following"])
-            if userData.__contains__("follwing") else 0,
+            len(userData["following"]),
             "followers":
-            len(userData["followers"])
-            if userData.__contains__("follwers") else 0,
+            len(userData["followers"]),
             "isFollowing":followingFlag
         }
         return mainData, 200
+
+
+class Following(Resource):
+    @is_registerd
+    def post(email,self):
+        data=request.json
+        username=data["username"]
+        requestUserName=request.headers.get("username");
+        updateOne("user",{"$push":{"following":username}},{"username":requestUserName})
+        updateOne("user",{"$push":{"followers":requestUserName}},{"username":username})
+        return {"status":"success"},200
+
+class UnFollow(Resource):
+    @is_registerd
+    def post(email,self):
+        data=request.json
+        username=data["username"]
+        requestUserName=request.headers.get("username");
+        updateOne("user",{"$pullAll":{"following":[username]}},{"username":requestUserName})
+        updateOne("user",{"$pullAll":{"followers":[requestUserName]}},{"username":username})
+        return {"status":"success"},200
