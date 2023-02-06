@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import * as htmlToImage from "html-to-image";
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
 import { api } from "../utils/api";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import Loading from "../components/Loading";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -12,6 +12,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 export default function Profile() {
   const { id } = useParams();
   const { logout } = useAuth0();
+  const queryClient = useQueryClient();
   const stringToColor = (string) => {
     let hash = 0;
     let i;
@@ -51,6 +52,24 @@ export default function Profile() {
     return userData;
   };
 
+  const putProfileData = async (isFollow) => {
+    let userData = {};
+    if (isFollow) {
+      userData = await api.post("/follow", { username: id });
+    } else {
+      userData = await api.post("/unfollow", { username: id });
+    }
+    return userData;
+  };
+  const followMutator = useMutation(putProfileData, {
+    onSuccess: (data, variable, context) => {
+      queryClient.invalidateQueries(["profile", id]);
+      queryClient.invalidateQueries("profile");
+    },
+    onSettled: () => {
+      followMutator.reset();
+    },
+  });
   const profileData =
     id === undefined
       ? useQuery("profile", getProfileData)
@@ -117,6 +136,9 @@ export default function Profile() {
                     color: "white",
                     fontWeight: "600",
                   }}
+                  onClick={() => {
+                    followMutator.mutateAsync(true);
+                  }}
                 >
                   Follow
                 </Button>
@@ -125,9 +147,12 @@ export default function Profile() {
                   variant="contained"
                   sx={{
                     marginTop: "10px",
-                    backgroundColor: "#a72ef8",
+                    backgroundColor: "#f82e9d",
                     color: "white",
                     fontWeight: "600",
+                  }}
+                  onClick={()=>{
+                    followMutator.mutateAsync(false);
                   }}
                 >
                   UnFollow
