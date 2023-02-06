@@ -29,6 +29,10 @@ function App() {
           navigate("verify");
         }
         let apiResponse = await api.get("/isregister");
+        if(apiResponse.status==="registered"){
+          let {username}=await api.get("/username");
+          api.setUserName(username);
+        }
         if (api.getUserData()["email_verified"]) {
           if (location.pathname === "/verify") {
             navigate("/");
