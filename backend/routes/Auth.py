@@ -19,7 +19,9 @@ def signupUtil(data):
             "email":email,
             "username":username,
             "tags":tags,
-            "date_created":str(datetime.utcnow())
+            "date_created":str(datetime.utcnow()),
+            "following":[],
+            "followers":[]
             }
         insertOne("user",json_data)
         
