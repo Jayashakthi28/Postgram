@@ -8,7 +8,7 @@ from routes.Topic import Topic
 from routes.IsRegistered import IsRegistered
 from routes.ResendVerifyEmail import Resend,Status
 from routes.User import User
-from routes.User import Following
+from routes.User import Follow
 from routes.User import UnFollow
 from routes.UserName import UserName
 from flask_cors import CORS

@@ -37,7 +37,7 @@ class User(Resource):
         return mainData, 200
 
 
-class Following(Resource):
+class Follow(Resource):
     @is_registerd
     def post(email,self):
         data=request.json
