@@ -11,6 +11,8 @@ from routes.User import User
 from routes.User import Follow
 from routes.User import UnFollow
 from routes.UserName import UserName
+from routes.User import Followers
+from routes.User import Following
 from flask_cors import CORS
 
 app=Flask(__name__)
@@ -29,7 +31,9 @@ api.add_resource(Resend,"/email/verify")
 api.add_resource(Status,"/email/check")
 api.add_resource(UserName,"/username");
 api.add_resource(User,"/user/<username>","/user")
-api.add_resource(Following,"/follow")
+api.add_resource(Followers,"/followers","/followers/<username>");
+api.add_resource(Following,"/following","/following/<username>");
+api.add_resource(Follow,"/follow")
 api.add_resource(UnFollow,"/unfollow")
 
 if __name__=="__main__":

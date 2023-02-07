@@ -56,3 +56,55 @@ class UnFollow(Resource):
         updateOne("user",{"$pullAll":{"following":[username]}},{"username":requestUserName})
         updateOne("user",{"$pullAll":{"followers":[requestUserName]}},{"username":username})
         return {"status":"success"},200
+
+class Followers(Resource):
+    @is_registerd
+    def get(email,self,username=None):
+        myfollowing=findWithProject("user",{"email":email},{"following":1})
+        followers=[]
+        if(username!=None):
+            followers=findWithProject("user",{"username":username},{"followers":1})
+        else:
+            followers=findWithProject("user",{"email":email},{"followers":1})
+        retArr=[]
+        for x in followers[0]["followers"]:
+            userData=findWithProject("user",{"username":x},{"name":1})
+            temObj={
+                    "username":x,
+                    "name":userData[0]["name"]
+                }
+            if(x in myfollowing[0]["following"]):
+                temObj["isFollowing"]=True
+            else:
+                temObj["isFollowing"]=False
+            retArr.append(temObj)
+        return {"followers":retArr},200
+
+class Following(Resource):
+    @is_registerd
+    def get(email,self,username=None):
+        myfollowing=findWithProject("user",{"email":email},{"following":1})[0]["following"]
+        retArr=[]
+        if(username!=None):
+            following=findWithProject("user",{"username":username},{"following":1})
+            for x in following[0]["following"]:
+                name=findWithProject("user",{"username":x},{"name":1})[0]["name"]
+                temObj={
+                    "username":x,
+                    "name":name
+                }
+                if(x in myfollowing):
+                    temObj["isFollowing"]=True
+                else:
+                    temObj["isFollowing"]=False
+                retArr.append(temObj)
+        else:
+            for x in myfollowing:
+                name=findWithProject("user",{"username":x},{"name":1})[0]["name"]
+                temObj={
+                    "username":x,
+                    "name":name,
+                    "isFollowing":True
+                }
+                retArr.append(temObj)
+        return {"following":retArr},200
