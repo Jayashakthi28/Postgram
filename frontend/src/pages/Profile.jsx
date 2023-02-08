@@ -1,5 +1,11 @@
-import { Avatar, Typography, Button, IconButton } from "@mui/material";
-import React from "react";
+import {
+  Avatar,
+  Typography,
+  Button,
+  IconButton,
+  useStepContext,
+} from "@mui/material";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import * as htmlToImage from "html-to-image";
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from "html-to-image";
@@ -8,11 +14,14 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import Loading from "../components/Loading";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth0 } from "@auth0/auth0-react";
+import OverlayContainer from "../components/OverlayContainer";
 
 export default function Profile() {
   const { id } = useParams();
   const { logout } = useAuth0();
   const queryClient = useQueryClient();
+  const [isBoxOpen, setBoxStatus] = useState(false);
+  const [currentFocus, setCurrentFocus] = useState("following");
   const stringToColor = (string) => {
     let hash = 0;
     let i;
@@ -64,7 +73,7 @@ export default function Profile() {
   const followMutator = useMutation(putProfileData, {
     onSuccess: (data, variable, context) => {
       queryClient.invalidateQueries(["profile", id]);
-      queryClient.invalidateQueries("profile");
+      queryClient.invalidateQueries("profile", { exact: true });
     },
     onSettled: () => {
       followMutator.reset();
@@ -74,9 +83,16 @@ export default function Profile() {
     id === undefined
       ? useQuery("profile", getProfileData)
       : useQuery(["profile", id], getProfileData);
+
   return (
     <>
-      {profileData.isLoading ? (
+      {isBoxOpen ? (
+        <OverlayContainer
+          currentFocus={currentFocus}
+          setBoxStatus={setBoxStatus}
+          id={id}
+        />
+      ) : profileData.isLoading ? (
         <Loading />
       ) : profileData.data.status === "not registered" ||
         profileData.data.status === "not found" ? (
@@ -106,7 +122,18 @@ export default function Profile() {
                   component="h2"
                   variant="h5"
                   fontWeight="600"
-                  sx={{ marginRight: "5px" }}
+                  sx={{
+                    marginRight: "5px",
+                    ":hover": {
+                      color: "#a72ef8",
+                    },
+                    transition: "all 200ms ease",
+                  }}
+                  className=" cursor-pointer"
+                  onClick={(e) => {
+                    setCurrentFocus("tags");
+                    setBoxStatus(true);
+                  }}
                 >
                   {profileData.data.tags} Tags
                 </Typography>
@@ -114,7 +141,18 @@ export default function Profile() {
                   component="h2"
                   variant="h5"
                   fontWeight="600"
-                  sx={{ margin: "0px 5px" }}
+                  sx={{
+                    margin: "0px 5px",
+                    ":hover": {
+                      color: "#a72ef8",
+                    },
+                    transition: "all 200ms ease",
+                  }}
+                  className=" cursor-pointer"
+                  onClick={(e) => {
+                    setCurrentFocus("following");
+                    setBoxStatus(true);
+                  }}
                 >
                   {profileData.data.following} Following
                 </Typography>
@@ -122,7 +160,18 @@ export default function Profile() {
                   component="h2"
                   variant="h5"
                   fontWeight="600"
-                  sx={{ margin: "0px 5px" }}
+                  sx={{
+                    margin: "0px 5px",
+                    ":hover": {
+                      color: "#a72ef8",
+                    },
+                    transition: "all 200ms ease",
+                  }}
+                  className=" cursor-pointer"
+                  onClick={(e) => {
+                    setCurrentFocus("followers");
+                    setBoxStatus(true);
+                  }}
                 >
                   {profileData.data.followers} Followers
                 </Typography>
@@ -139,6 +188,12 @@ export default function Profile() {
                   onClick={() => {
                     followMutator.mutateAsync(true);
                   }}
+                  disabled={
+                    followMutator.isLoading ||
+                    profileData.isLoading ||
+                    profileData.isFetching ||
+                    profileData.isRefetching
+                  }
                 >
                   Follow
                 </Button>
@@ -151,9 +206,15 @@ export default function Profile() {
                     color: "white",
                     fontWeight: "600",
                   }}
-                  onClick={()=>{
+                  onClick={() => {
                     followMutator.mutateAsync(false);
                   }}
+                  disabled={
+                    followMutator.isLoading ||
+                    profileData.isLoading ||
+                    profileData.isFetching ||
+                    profileData.isRefetching
+                  }
                 >
                   UnFollow
                 </Button>
