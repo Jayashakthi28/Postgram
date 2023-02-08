@@ -108,3 +108,47 @@ class Following(Resource):
                 }
                 retArr.append(temObj)
         return {"following":retArr},200
+
+class Tag(Resource):
+    @is_registerd
+    def get(email,self,username=None):
+        myTags=findWithProject("user",{"email":email},{"tags":1})[0]["tags"]
+        retArr=[]
+        if(username!=None):
+            tags=findWithProject("user",{"username":username},{"tags":1})[0]["tags"]
+            for x in tags:
+                temObj={
+                    "tag":x
+                }
+                if x in myTags:
+                    temObj["isFollowing"]=True
+                else:
+                    temObj["isFollowing"]=False
+                retArr.append(temObj)
+        else:
+            for x in myTags:
+                temObj={
+                    "tag":x,
+                    "isFollowing":True
+                }
+                retArr.append(temObj)
+        return {"tags":retArr},200
+
+class TagFollow(Resource):
+    @is_registerd
+    def post(email,self):
+        data=request.json
+        tag=data["tag"]
+        requestUserName=request.headers.get("username");
+        updateOne("user",{"$push":{"tags":tag}},{"username":requestUserName})
+        return {"status":"success"},200
+
+
+class TagUnFollow(Resource):
+    @is_registerd
+    def post(email,self):
+        data=request.json
+        tag=data["tag"]
+        requestUserName=request.headers.get("username");
+        updateOne("user",{"$pullAll":{"tags":[tag]}},{"username":requestUserName})
+        return {"status":"success"},200
