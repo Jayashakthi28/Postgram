@@ -35,3 +35,8 @@ def findWithProject(collection, data, projection):
     col = db[collection]
     res = list(col.find(filter=data, projection=projection))
     return res
+
+def findWithProjectAndLimit(collection, data, projection,limit,sorter):
+    col = db[collection]
+    res = list(col.find(filter=data, projection=projection).limit(limit).sort(sorter))
+    return res
