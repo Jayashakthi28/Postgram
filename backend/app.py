@@ -16,6 +16,7 @@ from routes.UserName import UserName
 from routes.User import Followers
 from routes.User import Following
 from routes.User import Tag
+from routes.Search import Search
 from flask_cors import CORS
 
 app=Flask(__name__)
@@ -41,6 +42,7 @@ api.add_resource(TagUnFollow,"/tag/unfollow");
 api.add_resource(Tag,"/tag","/tag/<username>");
 api.add_resource(Follow,"/follow")
 api.add_resource(UnFollow,"/unfollow")
+api.add_resource(Search,"/search")
 
 if __name__=="__main__":
     app.run(debug=True)
