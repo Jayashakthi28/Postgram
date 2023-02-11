@@ -15,7 +15,7 @@ class Search(Resource):
                                       "following": 1, "tags": 1})
         myTags = myfollowing[0]["tags"]
         myfollowing = myfollowing[0]["following"]
-        usernameQuery = findWithProject("user",{"$or": [{"username": {"$regex": "^"+query,"$options":"i"}}, {"name": {"$regex": "^"+query,"$options":"i"}}]}, {
+        usernameQuery = findWithProject("user",{"$or": [{"username": {"$regex": "^"+query,"$options":"i"}}, {"name": {"$regex": "^"+query,"$options":"i"}}]}, {"_id":1,
                                         "username": 1, "name": 1})
         tagQuery = findWithProjectAndLimit(
             "tags", {"topic": {"$regex": "^"+query,"$options":"i"}}, {"topic": 1},4,"topic")
@@ -26,7 +26,7 @@ class Search(Resource):
                 "name": x["name"],
                 "username": x["username"]
             }
-            if (x["username"] in myfollowing):
+            if (x["_id"] in myfollowing):
                 temObj["isFollowing"] = True
             else:
                 temObj["isFollowing"] = False
