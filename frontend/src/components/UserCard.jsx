@@ -5,7 +5,7 @@ export default function UserCard({
   username,
   name,
   isFollowing,
-  setBoxStatus,
+  setBoxStatus=null,
   mutator,
 }) {
   const stringToColor = (string) => {
@@ -48,14 +48,16 @@ export default function UserCard({
       <div
         className="flex flex-col items-start justify-center mx-3 w-[210px] overflow-hidden cursor-pointer"
         onClick={(e) => {
-          setBoxStatus(false);
+          if(setBoxStatus){
+            setBoxStatus(false);
+          }
           navigate(`/profile/${username}`);
         }}
       >
-        <Typography variant="h4" component="h4">
+        <Typography variant="h4" component="h4" sx={{"whiteSpace":"nowrap"}}>
           {name}
         </Typography>
-        <Typography variant="h9" component="h6">
+        <Typography variant="h9" component="h6" sx={{"whiteSpace":"nowrap"}}>
           @{username}
         </Typography>
       </div>
