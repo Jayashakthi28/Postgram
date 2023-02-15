@@ -60,6 +60,5 @@ class Post(Resource):
         for x in tag:
             ack=list(find("tags",{"topic":x}))
             if(not ack):
-                insertOne("tags",{"topic":x,"posts":[]})
-            updateOne("tags",{"$push":{"posts":postId}},{"topic":x})
+                insertOne("tags",{"topic":x})
         return {"status":"Successfully inserted"},200;
