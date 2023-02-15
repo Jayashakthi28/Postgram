@@ -62,3 +62,91 @@ class Post(Resource):
             if(not ack):
                 insertOne("tags",{"topic":x})
         return {"status":"Successfully inserted"},200;
+
+class Visited(Resource):
+    @is_registerd
+    def get(email,self,postId=None):
+        postId=ObjectId(postId)
+        userId=findWithProject("user",{"email":email},{"_id:1"})[0]["_id"]
+        data=updateOne("post",{"$push":{"visited":userId}},{"_id":postId})
+        return {"status":"success"},200
+
+class AllPosts(Resource):
+    @is_registerd
+    def get(email,self,username=None):
+        myUserData=findWithProject("user",{"email":email},{"_id":1,"following":1,"username":1})[0]
+        retArr=[]
+        if username!=None:
+            userData=findWithProject("user",{"username":username},{"_id":1})[0];
+            userPosts=list(find("post",{"user":userData["_id"]}))
+            if userData["_id"] in myUserData["following"]:
+                isFollowing=True
+            else:
+                isFollowing=False
+            for x in userPosts:
+                temObj={}
+                temObj["text"]=x["text"]
+                temObj["font"]=x["font"]
+                temObj["background"]=x["background"]
+                temObj["tag"]=x["tag"]
+                temObj["fontColor"]=x["fontColor"]
+                temObj["username"]=username
+                temObj["comments"]=len(x["comments"])
+                temObj["likes"]=len(x["likes"])
+                temObj["id"]=str(x["_id"])
+                temObj["isFollowing"]=isFollowing
+                if myUserData["_id"] in x["likes"]:
+                    temObj["isLiked"]=True
+                else:
+                    temObj["isLiked"]=False     
+                retArr.append(temObj)
+        else:
+            posts=list(find("post",{"user":myUserData["_id"]}))
+            for x in posts:
+                temObj={}
+                temObj["text"]=x["text"]
+                temObj["font"]=x["font"]
+                temObj["background"]=x["background"]
+                temObj["tag"]=x["tag"]
+                temObj["fontColor"]=x["fontColor"]
+                temObj["username"]=myUserData["username"]
+                temObj["comments"]=len(x["comments"])
+                temObj["likes"]=len(x["likes"])
+                temObj["id"]=str(x["_id"])
+                temObj["isFollowing"]=None
+                if myUserData["_id"] in x["likes"]:
+                    temObj["isLiked"]=True
+                else:
+                    temObj["isLiked"]=False    
+                retArr.append(temObj)
+        return {"data":retArr},200
+
+class Comments(Resource):
+    @is_registerd
+    def post(email,self,postId):
+        userId=findWithProject("user",{"email":email},{"_id:1"})[0]["_id"]
+        data=request.json
+        comment=data["comment"]
+        obj={
+            "comment":comment,
+            "user":userId
+        }
+        res=insertOne("user",obj)
+        commentId=res.inserted_id
+        updateOne("post",{"$push":{"comments":commentId}},{"_id":postId})
+        return {"status":"success"},200
+    
+    @is_registerd
+    def get(email,self,postId):
+        postId=ObjectId(postId)
+        commentsId=findWithProject("post",{"_id":postId},{"comments":1})[0]["comments"]
+        retArr=[]
+        for x in commentsId:
+            comment=findWithProject("comment",{"_id":x},{"comment":1,"user":1})[0]
+            commentedUserName=findWithProject("user",{"_id":comment["user"]},{"username":1})[0]["username"]
+            temObj={
+                "comment":comment["comment"],
+                "username":commentedUserName
+            }
+            retArr.append(temObj)
+        return {"data":retArr},200
