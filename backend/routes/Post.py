@@ -51,10 +51,12 @@ class Post(Resource):
             "tag": tag,
             "fontColor": fontColor,
             "user": userId,
-            "time":time
+            "time":time,
+            "visited":[],
+            "comments":[],
+            "likes":[]
         }
         res=insertOne("post",post_data);
-        postId=res.inserted_id
         for x in tag:
             ack=list(find("tags",{"topic":x}))
             if(not ack):
