@@ -41,7 +41,20 @@ def findWithProjectAndLimit(collection, data, projection,limit,sorter):
     res = list(col.find(filter=data, projection=projection).limit(limit).sort(sorter))
     return res
 
-def aggregationQuery(collection,match,lookup,projection):
+def aggregationQuery(collection,match,lookup,projection=None):
     col=db[collection]
-    res=col.aggregate([{"$match":match},{"$lookup":lookup},{"$project":projection}])
+    res={}
+    if projection!=None:
+        res=col.aggregate([{"$match":match},{"$lookup":lookup},{"$project":projection}])
+    else:
+        res=col.aggregate([{"$match":match},{"$lookup":lookup}])
+    return res
+
+def aggregationQueryWithLimit(collection,match,lookup,projection=None,limit=10):
+    col=db[collection]
+    res={}
+    if projection!=None:
+        res=col.aggregate([{"$match":match},{"$lookup":lookup},{"$project":projection},{"$limit":limit}])
+    else:
+        res=col.aggregate([{"$match":match},{"$lookup":lookup},{"$limit":limit}])
     return res
