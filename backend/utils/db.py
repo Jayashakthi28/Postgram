@@ -58,3 +58,11 @@ def aggregationQueryWithLimit(collection,match,lookup,projection=None,limit=10):
     else:
         res=col.aggregate([{"$match":match},{"$lookup":lookup},{"$limit":limit}])
     return res
+
+def aggregationQueryWithLimitAndSkip(collection,match,lookup,limit,skip,isTimeSort=False):
+    col=db[collection]
+    if(isTimeSort):
+        res=col.aggregate([{"$match":match},{"$lookup":lookup},{"$skip":int(skip)},{"$limit":limit},{"$sort":{"time":-1}},{"$sort":{"visited":-1}},{"$sort":{"likes":-1}}])
+    else:
+        res=col.aggregate([{"$match":match},{"$lookup":lookup},{"$skip":int(skip)},{"$limit":limit},{"$sort":{"visited":-1}},{"$sort":{"likes":-1}}])
+    return res
