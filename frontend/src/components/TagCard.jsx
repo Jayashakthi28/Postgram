@@ -1,5 +1,6 @@
 import { Avatar, Typography, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 export default function TagCard({
   name,
@@ -7,6 +8,7 @@ export default function TagCard({
   mutator,
 }) {
   const [disabler, setDisabler] = useState(false);
+  const queryClient=useQueryClient();
   useEffect(()=>{
     setDisabler(false);
   },[isFollowing]);
@@ -27,10 +29,12 @@ export default function TagCard({
             backgroundColor: "#f82e9d",
             color: "white",
             fontWeight: "600",
+            width:"80px"
           }}
           disabled={disabler}
           onClick={() => {
             setDisabler(true);
+            queryClient.resetQueries('feed');
             mutator.mutateAsync({ isFollow: false, "tag":name });
           }}
         >
@@ -43,10 +47,12 @@ export default function TagCard({
             backgroundColor: "#a72ef8",
             color: "white",
             fontWeight: "600",
+            width:"80px"
           }}
           disabled={disabler}
           onClick={() => {
             setDisabler(true);
+            queryClient.resetQueries('feed');
             mutator.mutateAsync({ isFollow: true, "tag":name });
           }}
         >
