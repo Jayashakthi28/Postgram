@@ -4,6 +4,8 @@ from flask import Flask
 from flask_restful import Api
 from routes.Auth import Register
 from routes.Post import Post
+from routes.Post import FollowingVisited
+from routes.Post import Random
 from routes.Post import Visited
 from routes.Post import AllPosts
 from routes.Post import Comments
@@ -34,6 +36,8 @@ api.add_resource(Register,"/register")
 api.add_resource(AllPosts,"/allpost","/allpost/<username>")
 api.add_resource(Visited,"/visited/<postId>")
 api.add_resource(Comments,"/comments/<postId>")
+api.add_resource(FollowingVisited,"/post/visited/<page>")
+api.add_resource(Random,"/post/random/<page>")
 api.add_resource(Post,"/post")
 api.add_resource(Topic,"/tags")
 api.add_resource(IsRegistered,"/isregister")
