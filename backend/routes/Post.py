@@ -4,7 +4,7 @@ from flask import request
 from utils.db import findWithProject, findOne, insertOne, find, updateOne, aggregationQuery, aggregationQueryWithLimit, aggregationQueryWithLimitAndSkip
 from datetime import datetime,timezone
 from bson import ObjectId
-
+from utils.notificationPutter import notificationPutter
 
 class Post(Resource):
     @is_registerd
@@ -209,10 +209,17 @@ class Comments(Resource):
             "comment": comment,
             "user": userId
         }
-        res = insertOne("user", obj)
+        res = insertOne("comments", obj)
+        postId=ObjectId(postId)
         commentId = res.inserted_id
         updateOne("post", {"$push": {"comments": commentId}}, {"_id": postId})
-        return {"status": "success"}, 200
+        postData=findWithProject("post",{"_id":postId},{"likes":1,"comments":1,"_id":1,"user":1})[0]
+        notificationPutter(postData["user"],userId,[postData["user"]],"comment")
+        returnObj={}
+        returnObj["comments"] = len(postData["comments"])
+        returnObj["likes"] = len(postData["likes"])
+        returnObj["id"] = str(postData["_id"])
+        return {"status": "success","data":returnObj}, 200
 
     @is_registerd
     def get(email, self, postId):
@@ -221,7 +228,7 @@ class Comments(Resource):
                                      "comments": 1})[0]["comments"]
         retArr = []
         for x in commentsId:
-            comment = findWithProject("comment", {"_id": x}, {
+            comment = findWithProject("comments", {"_id": x}, {
                                       "comment": 1, "user": 1})[0]
             commentedUserName = findWithProject("user", {"_id": comment["user"]}, {
                                                 "username": 1})[0]["username"]
@@ -231,3 +238,35 @@ class Comments(Resource):
             }
             retArr.append(temObj)
         return {"data": retArr}, 200
+
+class Like(Resource):
+    @is_registerd
+    def post(email, self):
+        data = request.json
+        postId = ObjectId(data["postId"])
+        userID = findWithProject(
+            "user", {"email": email}, {"_id": 1})[0]["_id"]
+        updateOne("post", {"$pullAll": {"likes": [userID]}}, {"_id": postId})
+        updateOne("post", {"$push": {"likes": userID}}, {"_id": postId})
+        postData=findWithProject("post",{"_id":postId},{"likes":1,"comments":1,"_id":1,"user":1})[0]
+        notificationPutter(postData["user"],userID,[postData["user"]],"like")
+        returnObj={}
+        returnObj["comments"] = len(postData["comments"])
+        returnObj["likes"] = len(postData["likes"])
+        returnObj["id"] = str(postData["_id"])
+        return {"status": "success","data":returnObj}, 200
+
+class UnLike(Resource):
+    @is_registerd
+    def post(email, self):
+        data = request.json
+        postId = ObjectId(data["postId"])
+        userID = findWithProject(
+            "user", {"email": email}, {"_id": 1})[0]["_id"]
+        updateOne("post", {"$pullAll": {"likes": [userID]}}, {"_id": postId})
+        postData=findWithProject("post",{"_id":postId},{"likes":1,"comments":1,"_id":1})[0]
+        returnObj={}
+        returnObj["comments"] = len(postData["comments"])
+        returnObj["likes"] = len(postData["likes"])
+        returnObj["id"] = str(postData["_id"])
+        return {"status": "success","data":returnObj}, 200
