@@ -6,12 +6,17 @@ const API = () => {
   let username = "";
   let userData = {};
 
-  const setUserData = (temData) => {
+  const setUserData = async(temData) => {
     userData = temData;
+    let userName=await get("/user");
+    userData["username"]=userName.username;
   };
 
   const setUserName=(temUserName)=>{
     username=temUserName;
+    let tem={...userData};
+    tem["username"]=temUserName;
+    userData=tem;
     axios.defaults.headers.common["username"]=username;
   }
 
