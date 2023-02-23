@@ -1,4 +1,4 @@
-import React, { useRef,useState,useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import PostBox from "./PostBox";
 import {
   IconButton,
@@ -15,7 +15,7 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpRoundedIcon from "@mui/icons-material/ThumbUpRounded";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import Skeleton from "react-loading-skeleton";
 import { api } from "../utils/api";
 import moment from "moment/moment";
@@ -50,22 +50,24 @@ const stringAvatar = (name) => {
   };
 };
 
-const ActionCard = ({ icon, text, className }) => {
+const ActionCard = ({ icon, text, className,onClick=()=>{} }) => {
   return (
     <div
-      className={` p-1 flex font-bubbler font-bold ${className} cursor-pointer mr-1 text-lg`}
+      className={` p-1 flex font-bubbler font-bold ${className} cursor-pointer mr-1 text-lg w-[80px]`}
+      onClick={onClick}
     >
+      {text===undefined && <span></span>}
       <IconButton sx={{ width: "30px", height: "30px", padding: "10px" }}>
         {icon}
       </IconButton>
-      <span className=" ml-1">{text}</span>
+      {text!==undefined && <span className=" ml-1">{text}</span>}
     </div>
   );
 };
 
-const UserViewer = ({ username, name, isFollowing }) => {
+const UserViewer = ({ username, name, isFollowing, mutator, page }) => {
+  
   const navigate = useNavigate();
-
   return (
     <div className=" p-2 flex w-full items-center">
       <Avatar {...stringAvatar(name)} />
@@ -98,6 +100,13 @@ const UserViewer = ({ username, name, isFollowing }) => {
             fontWeight: "600",
             width: "80px",
           }}
+          onClick={() => {
+            mutator.mutateAsync({
+              page: page,
+              forQuery: "unfollow",
+              data: { username: username },
+            });
+          }}
         >
           UnFollow
         </Button>
@@ -110,6 +119,13 @@ const UserViewer = ({ username, name, isFollowing }) => {
             fontWeight: "600",
             width: "80px",
           }}
+          onClick={() => {
+            mutator.mutateAsync({
+              page: page,
+              forQuery: "follow",
+              data: { username: username },
+            });
+          }}
         >
           Follow
         </Button>
@@ -118,30 +134,27 @@ const UserViewer = ({ username, name, isFollowing }) => {
   );
 };
 
-
 function useOnScreen(ref, rootMargin = "0px") {
-
-    const [isIntersecting, setIntersecting] = useState(false);
-    useEffect(() => {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          setIntersecting(entry.isIntersecting);
-        },
-        {
-          rootMargin,
-        }
-      );
-      if (ref.current) {
-        observer.observe(ref.current);
+  const [isIntersecting, setIntersecting] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIntersecting(entry.isIntersecting);
+      },
+      {
+        rootMargin,
       }
-      return () => {
-        if(ref.current===null) return;
-        observer.unobserve(ref.current);
-      };
-    }, []); // Empty array ensures that effect is only run on mount and unmount
-    return isIntersecting;
-  }
-
+    );
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => {
+      if (ref.current === null) return;
+      observer.unobserve(ref.current);
+    };
+  }, []); // Empty array ensures that effect is only run on mount and unmount
+  return isIntersecting;
+}
 
 export default function FeedBox({
   quote,
@@ -156,23 +169,35 @@ export default function FeedBox({
   comments,
   likes,
   name,
-  time
+  time,
+  page,
+  mutator,
+  setCommentOpen,
+  setPostId,
+  setPageOffset
 }) {
   let formatter = Intl.NumberFormat("en", { notation: "compact" });
   let boxShadow = "rgb(248,147,46)";
-  const ref=useRef();
-  const onScreen=useOnScreen(ref,"-300px");
-  const [visited,setVisited]=useState(false);
-  useEffect(()=>{
-    if(onScreen && !visited){
-        api.get(`/visited/${postId}`);
-        setVisited(true);
+  const ref = useRef();
+  const onScreen = useOnScreen(ref, "-300px");
+  const [visited, setVisited] = useState(false);
+  useEffect(() => {
+    if (onScreen && !visited) {
+      api.get(`/visited/${postId}`);
+      setVisited(true);
     }
-  },[onScreen]);
+  }, [onScreen]);
 
   return (
     <div className={` p-7 shadow-card w-fit mx-auto rounded-md my-4`} ref={ref}>
-      <UserViewer name={name} username={userName} isFollowing={isFollowing} key={()=>(uidv4())}/>
+      <UserViewer
+        name={name}
+        username={userName}
+        isFollowing={isFollowing}
+        key={() => uidv4()}
+        mutator={mutator}
+        page={page}
+      />
       <PostBox
         quote={quote}
         bgColor={bgColor}
@@ -184,33 +209,55 @@ export default function FeedBox({
         direction="row"
         spacing="1"
         sx={{
-          margin: "4px 0",
+          margin: "4px 0"
         }}
       >
         <div>
           {isLiked ? (
             <ActionCard
               icon={<ThumbUpRoundedIcon />}
-              text={` ${formatter.format(likes)} Likes`}
-              key={()=>(uuidv4())}
+              text={` ${formatter.format(likes)}`}
+              key={() => uuidv4()}
+              onClick={() => {
+                mutator.mutateAsync({
+                  page: page,
+                  forQuery: "unlike",
+                  data: { postId: postId },
+                });
+              }}
             />
           ) : (
             <ActionCard
               icon={<ThumbUpOutlinedIcon />}
-              text={`${formatter.format(comments)} Likes`}
-              key={()=>(uuidv4())}
+              text={`${formatter.format(likes)}`}
+              key={() => uuidv4()}
+              onClick={() => {
+                mutator.mutateAsync({
+                  page: page,
+                  forQuery: "like",
+                  data: { postId: postId },
+                });
+              }}
             />
           )}
         </div>
         <div>
           <ActionCard
             icon={<ChatBubbleOutlineOutlinedIcon color="" />}
-            text={`${formatter.format(comments)} Comments`}
-            key={()=>(uuidv4())}
+            text={`${formatter.format(comments)}`}
+            key={() => uuidv4()}
+            onClick={()=>{
+                setPageOffset(window.pageYOffset);
+                setPostId(postId);
+                setCommentOpen(true);
+            }}
           />
         </div>
-        <div className=" !ml-32">
-          <ActionCard icon={<FileDownloadOutlinedIcon color="" />}  key={()=>(uuidv4())}/>
+        <div>
+          <ActionCard
+            icon={<FileDownloadOutlinedIcon color="" />}
+            key={() => uuidv4()}
+          />
         </div>
       </Stack>
       <Stack
@@ -219,10 +266,14 @@ export default function FeedBox({
         flexWrap={"wrap"}
         alignItems="center"
       >
-        {tags.map((t,i) => (
+        {tags.map((t, i) => (
           <Chip
             avatar={
-              <Avatar sx={{ bgcolor: `${bgColor}`, color: `${fontColor} !important` }}>＃</Avatar>
+              <Avatar
+                sx={{ bgcolor: `${bgColor}`, color: `${fontColor} !important` }}
+              >
+                ＃
+              </Avatar>
             }
             label={t}
             variant="outlined"
@@ -231,7 +282,9 @@ export default function FeedBox({
           />
         ))}
       </Stack>
-      <Typography sx={{margin:"2px",marginLeft:"0.5rem"}}>{moment(time).fromNow(true)}</Typography>
+      <Typography fontSize="0.8rem" sx={{ margin: "2px", marginLeft: "0.5rem" }}>
+        {moment(time).fromNow()}
+      </Typography>
     </div>
   );
 }
