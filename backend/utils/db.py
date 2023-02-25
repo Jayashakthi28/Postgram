@@ -26,6 +26,11 @@ def find(collection,data):
     res=col.find(data)
     return res
 
+def findWithSort(collection,data,sorter,sortValue=1,pageNum=0):
+    col=db[collection]
+    res=col.find(data).sort(sorter,sortValue).skip(pageNum*10).limit(10)
+    return res
+
 def updateOne(collection,data,filter):
     col=db[collection]
     res=col.update_one(filter,data)
