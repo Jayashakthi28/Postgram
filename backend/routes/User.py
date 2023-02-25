@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from utils.isRegistered import is_registerd
-from utils.db import findOne, findWithProject, updateOne, find, aggregationQuery,findWithSort
+from utils.db import findOne, findWithProject, updateOne, find, aggregationQuery,findWithSort,updateMany
 from flask import request
 from utils.notificationPutter import notificationPutter
 from datetime import datetime,timezone
@@ -186,7 +186,7 @@ class Notification(Resource):
             temObj["isMe"]=None
             temObj["id"]=str(x["_id"])
             temObj["postId"]=x["postId"]
-            if(x["type"]=="follow" or x["type"]=="like"):
+            if(x["type"]=="follow" or x["type"]=="like" or x["type"]=="comment"):
                 username=findWithProject("user",{"_id":x["by"]},{"username":1})[0]["username"]
             else:
                 if(x["by"]==userId):
@@ -199,3 +199,22 @@ class Notification(Resource):
             temObj["time"]=x["time"].isoformat()+"Z"
             retArr.append(temObj)
         return {"data":retArr,"hasNext":(len(retArr)==10),"page":page}
+    
+class NotificationUpdate(Resource):
+    @is_registerd
+    def post(email,self):
+        data=request.json
+        time=data["time"][:-1]
+        myUserId=findWithProject("user",{"email":email},{"_id":1})[0]["_id"]
+        currDateObj=datetime.fromisoformat(time)
+        updateMany("notifications",{"$addToSet":{"isVisited":myUserId}},{"time":{"$lte":currDateObj},"users":myUserId})
+        return {"status":"success"}
+    
+    @is_registerd
+    def get(email,self):
+        myUserId=findWithProject("user",{"email":email},{"_id":1})[0]["_id"]
+        res=find("notifications",{"users":myUserId,"isVisited":{"$nin":[myUserId]}})
+        unread=0
+        for x in res:
+            unread+=1
+        return {"unread":unread}
