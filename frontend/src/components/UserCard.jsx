@@ -45,10 +45,10 @@ export default function UserCard({
     setDisabler(false);
   },[isFollowing]);
   return (
-    <div className=" flex items-center my-2 shadow-card p-2 w-[400px] mx-auto rounded-lg hover:shadow-hover transition-shadow ease-linear delay-100">
+    <div className=" flex items-center my-2 shadow-card p-2 px-5 max-w-[500px] mx-auto rounded-lg hover:shadow-hover transition-shadow ease-linear delay-100">
       <Avatar {...stringAvatar(name)} />
       <div
-        className="flex flex-col items-start justify-center mx-3 w-[210px] overflow-hidden cursor-pointer"
+        className="flex flex-col items-start justify-center mx-3 overflow-hidden cursor-pointer"
         onClick={(e) => {
           if(setBoxStatus){
             setBoxStatus(false);
@@ -70,7 +70,8 @@ export default function UserCard({
             backgroundColor: "#f82e9d",
             color: "white",
             fontWeight: "600",
-            width:"80px"
+            width:"80px",
+            marginLeft:"auto"
           }}
           disabled={disabler}
           onClick={() => {
@@ -88,7 +89,8 @@ export default function UserCard({
             backgroundColor: "#a72ef8",
             color: "white",
             fontWeight: "600",
-            width:"80px"
+            width:"80px",
+            marginLeft:"auto"
           }}
           disabled={disabler}
           onClick={() => {
