@@ -81,7 +81,9 @@ export default function Add() {
     setquotes("");
     setTags([]);
     setInputTag("");
-    textAreaEle.current.value="";
+    if(textAreaEle.current){
+      textAreaEle.current.value="";
+    }
   };
 
   if (mutation.isSuccess) {
@@ -90,7 +92,7 @@ export default function Add() {
       setAlert(false);
       mutation.reset();
       setAlert(true);
-    }, 4000);
+    }, 500);
     setTimeout(() => {
       reseter();
     }, 100);
