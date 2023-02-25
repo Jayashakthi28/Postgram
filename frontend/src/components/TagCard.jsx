@@ -13,10 +13,10 @@ export default function TagCard({
     setDisabler(false);
   },[isFollowing]);
   return (
-    <div className=" flex items-center my-2 shadow-card p-2 w-[400px] mx-auto rounded-lg hover:shadow-hover transition-shadow ease-linear delay-100">
+    <div className=" flex items-center my-2 shadow-card p-2 px-5 max-w-[500px] mx-auto rounded-lg hover:shadow-hover transition-shadow ease-linear delay-100">
       <Avatar sx={{bgcolor:"#f8932e",width:"50px",height:"50px"}}>＃</Avatar>
       <div
-        className="flex flex-col items-start justify-center mx-3 w-[210px] overflow-hidden"
+        className="flex flex-col items-start justify-center mx-3 overflow-hidden"
       >
         <Typography variant="h4" component="h4" sx={{"whiteSpace":"nowrap"}}>
           {name}
@@ -29,7 +29,8 @@ export default function TagCard({
             backgroundColor: "#f82e9d",
             color: "white",
             fontWeight: "600",
-            width:"80px"
+            width:"80px",
+            marginLeft:"auto"
           }}
           disabled={disabler}
           onClick={() => {
@@ -47,7 +48,8 @@ export default function TagCard({
             backgroundColor: "#a72ef8",
             color: "white",
             fontWeight: "600",
-            width:"80px"
+            width:"80px",
+            marginLeft:"auto"
           }}
           disabled={disabler}
           onClick={() => {
