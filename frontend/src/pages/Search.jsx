@@ -107,8 +107,8 @@ export default function Search() {
       </div>
       {searchResult.isLoading ? (
         <Loading />
-      ) : searchResult.data.users.length === 0 &&
-        searchResult.data.tags.length === 0 ? (
+      ) : searchResult.data.users?.length === 0 &&
+        searchResult.data.tags?.length === 0 ? (
         <div>
           <Typography
             variant="h6"
