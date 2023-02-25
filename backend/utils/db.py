@@ -41,6 +41,11 @@ def updateOne(collection,data,filter):
     res=col.update_one(filter,data)
     return res
 
+def updateMany(collection,data,filter):
+    col=db[collection]
+    res=col.update_many(filter,data)
+    return res
+
 def findWithProject(collection, data, projection):
     col = db[collection]
     res = list(col.find(filter=data, projection=projection))
