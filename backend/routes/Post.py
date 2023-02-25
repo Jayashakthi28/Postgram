@@ -214,7 +214,7 @@ class Comments(Resource):
         commentId = res.inserted_id
         updateOne("post", {"$push": {"comments": commentId}}, {"_id": postId})
         postData=findWithProject("post",{"_id":postId},{"likes":1,"comments":1,"_id":1,"user":1})[0]
-        notificationPutter(postData["user"],userId,[postData["user"]],"comment")
+        notificationPutter(postData["user"],userId,[postData["user"]],"comment",str(postId))
         returnObj={}
         returnObj["comments"] = len(postData["comments"])
         returnObj["likes"] = len(postData["likes"])
@@ -249,7 +249,7 @@ class Like(Resource):
         updateOne("post", {"$pullAll": {"likes": [userID]}}, {"_id": postId})
         updateOne("post", {"$push": {"likes": userID}}, {"_id": postId})
         postData=findWithProject("post",{"_id":postId},{"likes":1,"comments":1,"_id":1,"user":1})[0]
-        notificationPutter(postData["user"],userID,[postData["user"]],"like")
+        notificationPutter(postData["user"],userID,[postData["user"]],"like",str(postId))
         returnObj={}
         returnObj["comments"] = len(postData["comments"])
         returnObj["likes"] = len(postData["likes"])
