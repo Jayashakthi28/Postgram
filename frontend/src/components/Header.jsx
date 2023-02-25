@@ -7,9 +7,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import Badge from '@mui/material/Badge';
 import { Outlet, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { api } from "../utils/api";
+import { useQuery } from "react-query";
 
 export default function Header({ headerValue, setHeaderValue }) {
   const navigate = useNavigate();
@@ -18,6 +20,9 @@ export default function Header({ headerValue, setHeaderValue }) {
   useEffect(()=>{
    setIsNav(api.headerMapper(location.pathname, "nav"));
   },[location.pathname]);
+  const notification=useQuery(["notificationBadge"],()=>{
+    return api.get("/notification/update")
+  },{refetchInterval:5000,refetchIntervalInBackground:5000});
   return (
     <>
       <div className=" backdrop-blur-md bg-purple-300">
@@ -33,9 +38,12 @@ export default function Header({ headerValue, setHeaderValue }) {
         {isNav && (
           <Tabs
             value={headerValue}
-            centered
             indicatorColor="secondary"
             textColor="secondary"
+            scrollButtons="auto"
+            centered={window.screen.width>=500}
+            variant={window.screen.width<500 && "scrollable"}
+            allowScrollButtonsMobile
           >
             <Tab
               value="home"
@@ -63,13 +71,15 @@ export default function Header({ headerValue, setHeaderValue }) {
             />
             <Tab
               value="notification"
-              icon={
-                <NotificationsIcon fontSize="large" className=" text-black" />
-              }
               onClick={() => {
                 setHeaderValue("notification");
                 navigate("/notification");
               }}
+              label={
+                <Badge color="secondary" badgeContent={(!notification.isLoading&&+notification.data?.unread)}>
+                <NotificationsIcon fontSize="large" className=" text-black"/>
+              </Badge>
+              }
             />
             <Tab
               value="profile"
