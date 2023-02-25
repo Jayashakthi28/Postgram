@@ -33,39 +33,39 @@ export default function Feed() {
           variable.forQuery === "follow" ||
           variable.forQuery === "unfollow"
         ) {
-          temp.pages.forEach((currPage,i) => {
-            let currData=[]
+          temp.pages.forEach((currPage, i) => {
+            let currData = [];
             currPage.data.forEach((t) => {
               if (t.username === variable.data.username) {
                 let tempObj = { ...t };
                 tempObj.isFollowing = !tempObj.isFollowing;
                 currData.push(tempObj);
-              }
-              else{
+              } else {
                 currData.push(t);
               }
             });
-            currPage.data=currData
-            temp.pages[i]=currPage;
+            currPage.data = currData;
+            temp.pages[i] = currPage;
           });
-        }
-        else if(variable.forQuery==="like" || variable.forQuery==="unlike"){
-          let currPage=temp.pages[variable.page];
-          let retArr=[]
-          currPage.data.forEach(t=>{
-            if(t.id===variable.data.postId){
-              let temObj={...t};
-              temObj.isLiked=!temObj.isLiked
-              temObj.likes=data.data.likes;
-              temObj.comments=data.data.comments;
+        } else if (
+          variable.forQuery === "like" ||
+          variable.forQuery === "unlike"
+        ) {
+          let currPage = temp.pages[variable.page];
+          let retArr = [];
+          currPage.data.forEach((t) => {
+            if (t.id === variable.data.postId) {
+              let temObj = { ...t };
+              temObj.isLiked = !temObj.isLiked;
+              temObj.likes = data.data.likes;
+              temObj.comments = data.data.comments;
               retArr.push(temObj);
-            }
-            else{
+            } else {
               retArr.push(t);
             }
-          })
-          currPage.data=retArr;
-          temp.pages[variable.page]=currPage;
+          });
+          currPage.data = retArr;
+          temp.pages[variable.page] = currPage;
         }
         return temp;
       });
@@ -75,9 +75,9 @@ export default function Feed() {
     },
   });
   const queryClient = useQueryClient();
-  const [commentOpen,setcommentOpen]=useState(false);
-  const [currPostId,setcurrPostId]=useState("");
-  const [scrollYoffset,setscrollYoffset]=useState(window.pageYOffset);
+  const [commentOpen, setcommentOpen] = useState(false);
+  const [currPostId, setcurrPostId] = useState("");
+  const [scrollYoffset, setscrollYoffset] = useState(window.pageYOffset);
   const fetchPosts = async ({ pageParam = { topic: "post", page: 0 } }) => {
     let { topic, page } = pageParam;
     if (topic === "post") {
@@ -111,62 +111,65 @@ export default function Feed() {
     },
   });
   let lastPage = data?.pages.length - 1;
-  useEffect(()=>{
-    window.scroll(0,scrollYoffset);
-  },[commentOpen]);
+  useEffect(() => {
+    window.scroll(0, scrollYoffset);
+  }, [commentOpen]);
   if (data?.pages[lastPage]?.data.length === 0 && lastPage !== 2) {
     fetchNextPage();
   }
   return (
     <>
-    {commentOpen&&<Comments setCommentOpen={setcommentOpen} postId={currPostId}/>}
-        <InfiniteScroll
-      dataLength={data?.pages?.length || 0}
-      className={` bg-[url('/src/assets/bg.svg')] bg-fixed ${commentOpen?"!h-[calc(100vh-144px)] !overflow-hidden":"!h-auto !overflow-auto min-h-screen"}`}
-      next={() => fetchNextPage()}
-      hasMore={hasNextPage === undefined ? true : hasNextPage}
-      loader={
-        <Skeleton
-          height={400}
-          width={400}
-          className=" mx-auto"
-          enableAnimation
-        />
-      }
-      endMessage={
-        <div className=" mx-auto w-[400px] text-center font-bubbler font-bold text-2xl my-5">
-          Thats all we got for you 😬
-        </div>
-      }
-    >
-      {data?.pages.map((group, i) => (
-        <React.Fragment key={i}>
-          {group.data.map((t, idx) => (
-            <FeedBox
-              quote={t.text}
-              bgColor={t.background}
-              fontColor={t.fontColor}
-              font={t.font}
-              isLiked={t.isLiked}
-              userName={t.username}
-              isFollowing={t.isFollowing}
-              tags={t.tag}
-              postId={t.id}
-              comments={t.comments}
-              likes={t.likes}
-              name={t.name !== undefined ? t.name : t.userName}
-              key={idx}
-              time={t.time}
-              page={i}
-              mutator={postMutator}
-              setCommentOpen={setcommentOpen}
-              setPostId={setcurrPostId}
-              setPageOffset={setscrollYoffset}
-            />
-          ))}
-        </React.Fragment>
-      ))}
-    </InfiniteScroll>
+      {commentOpen && (
+        <Comments setCommentOpen={setcommentOpen} postId={currPostId} />
+      )}
+      <InfiniteScroll
+        dataLength={data?.pages?.length || 0}
+        className={` bg-[url('/src/assets/bg.svg')] bg-fixed ${
+          commentOpen
+            ? "!h-[calc(100vh-144px)] !overflow-hidden"
+            : "!h-auto !overflow-auto min-h-screen"
+        }`}
+        next={() => fetchNextPage()}
+        hasMore={hasNextPage === undefined ? true : hasNextPage}
+        loader={
+          <div className=" w-[400px] mx-auto">
+            <Skeleton height={400} enableAnimation />
+          </div>
+        }
+        endMessage={
+          <div className=" mx-auto w-[400px] text-center font-bubbler font-bold text-2xl my-5">
+            Thats all we got for you 😬
+          </div>
+        }
+      >
+        {data?.pages.map((group, i) => (
+          <React.Fragment key={i}>
+            {group.data.map((t, idx) => (
+              <FeedBox
+                quote={t.text}
+                bgColor={t.background}
+                fontColor={t.fontColor}
+                font={t.font}
+                isLiked={t.isLiked}
+                userName={t.username}
+                isFollowing={t.isFollowing}
+                tags={t.tag}
+                postId={t.id}
+                comments={t.comments}
+                likes={t.likes}
+                name={t.name !== undefined ? t.name : t.userName}
+                key={idx}
+                time={t.time}
+                page={i}
+                mutator={postMutator}
+                setCommentOpen={setcommentOpen}
+                setPostId={setcurrPostId}
+                setPageOffset={setscrollYoffset}
+              />
+            ))}
+          </React.Fragment>
+        ))}
+      </InfiniteScroll>
     </>
   );
 }
