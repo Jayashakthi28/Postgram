@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from utils.isRegistered import is_registerd
 from flask import request
-from utils.db import findWithProject, findOne, insertOne, find, updateOne, aggregationQuery, aggregationQueryWithLimit, aggregationQueryWithLimitAndSkip
+from utils.db import findWithProject, findOne, insertOne, find, updateOne, aggregationQuery, aggregationQueryWithLimit, aggregationQueryWithLimitAndSkip,findWithSortAndNoSkip
 from datetime import datetime,timezone
 from bson import ObjectId
 from utils.notificationPutter import notificationPutter
@@ -151,7 +151,7 @@ class AllPosts(Resource):
         if username != None:
             userData = findWithProject(
                 "user", {"username": username}, {"_id": 1,"name":1})[0]
-            userPosts = list(find("post", {"user": userData["_id"]}))
+            userPosts = findWithSortAndNoSkip("post", {"user": userData["_id"]},"time",-1)
             if userData["_id"] in myUserData["following"]:
                 isFollowing = True
             else:
@@ -176,7 +176,7 @@ class AllPosts(Resource):
                     temObj["isLiked"] = False
                 retArr.append(temObj)
         else:
-            posts = list(find("post", {"user": myUserData["_id"]}))
+            posts = findWithSortAndNoSkip("post", {"user": myUserData["_id"]},"time",-1)
             for x in posts:
                 temObj = {}
                 temObj["text"] = x["text"]
