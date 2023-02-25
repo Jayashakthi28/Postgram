@@ -65,7 +65,7 @@ const ActionCard = ({ icon, text, className,onClick=()=>{} }) => {
   );
 };
 
-const UserViewer = ({ username, name, isFollowing, mutator, page }) => {
+const UserViewer = ({ username, name, isFollowing, mutator, page,showFollowButton }) => {
   
   const navigate = useNavigate();
   return (
@@ -91,8 +91,9 @@ const UserViewer = ({ username, name, isFollowing, mutator, page }) => {
       >
         {username}
       </Typography>
+
       {isFollowing ? (
-        <Button
+        showFollowButton&&<Button
           variant="contained"
           sx={{
             backgroundColor: "#f82e9d",
@@ -111,7 +112,7 @@ const UserViewer = ({ username, name, isFollowing, mutator, page }) => {
           UnFollow
         </Button>
       ) : (
-        <Button
+        showFollowButton&&<Button
           variant="contained"
           sx={{
             backgroundColor: "#a72ef8",
@@ -174,7 +175,9 @@ export default function FeedBox({
   mutator,
   setCommentOpen,
   setPostId,
-  setPageOffset
+  setPageOffset,
+  calculateVisited=true,
+  showFollowButton=true
 }) {
   let formatter = Intl.NumberFormat("en", { notation: "compact" });
   let boxShadow = "rgb(248,147,46)";
@@ -182,14 +185,14 @@ export default function FeedBox({
   const onScreen = useOnScreen(ref, "-300px");
   const [visited, setVisited] = useState(false);
   useEffect(() => {
-    if (onScreen && !visited) {
+    if (onScreen && !visited && calculateVisited) {
       api.get(`/visited/${postId}`);
       setVisited(true);
     }
   }, [onScreen]);
 
   return (
-    <div className={` p-7 shadow-card w-fit mx-auto rounded-md my-4`} ref={ref}>
+    <div className={` p-7 shadow-card w-fit mx-auto rounded-md my-4 transition-all`} ref={ref} id={postId}>
       <UserViewer
         name={name}
         username={userName}
@@ -197,6 +200,7 @@ export default function FeedBox({
         key={() => uidv4()}
         mutator={mutator}
         page={page}
+        showFollowButton={showFollowButton}
       />
       <PostBox
         quote={quote}
