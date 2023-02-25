@@ -1,8 +1,10 @@
 from flask_restful import Resource
 from utils.isRegistered import is_registerd
-from utils.db import findOne, findWithProject, updateOne, find, aggregationQuery
+from utils.db import findOne, findWithProject, updateOne, find, aggregationQuery,findWithSort
 from flask import request
-
+from utils.notificationPutter import notificationPutter
+from datetime import datetime,timezone
+from bson import ObjectId
 
 class User(Resource):
     @is_registerd
@@ -50,10 +52,12 @@ class Follow(Resource):
     @is_registerd
     def post(email, self):
         data = request.json
+        myUserId=findWithProject("user",{"email":email},{"_id":1})[0]["_id"]
         username = data["username"]
         userID = findWithProject(
             "user", {"username": username}, {"_id": 1})[0]["_id"]
         updateOne("user", {"$push": {"following": userID}}, {"email": email})
+        notificationPutter(userID,myUserId,[userID],"follow")
         return {"status": "success"}, 200
 
 
@@ -166,3 +170,32 @@ class TagUnFollow(Resource):
         tag = data["tag"]
         updateOne("user", {"$pullAll": {"tags": [tag]}}, {"email": email})
         return {"status": "success"}, 200
+
+
+class Notification(Resource):
+    @is_registerd
+    def get(email,self,page):
+        userId=findWithProject("user",{"email":email},{"_id":1})[0]["_id"]
+        print(userId)
+        data=findWithSort("notifications",{"users":userId},"time",-1,int(page))
+        retArr=[]
+        for x in data:
+            temObj={}
+            temObj["type"]=x["type"]
+            username=""
+            temObj["isMe"]=None
+            temObj["id"]=str(x["_id"])
+            temObj["postId"]=x["postId"]
+            if(x["type"]=="follow" or x["type"]=="like"):
+                username=findWithProject("user",{"_id":x["by"]},{"username":1})[0]["username"]
+            else:
+                if(x["by"]==userId):
+                    temObj["isMe"]=True
+                    username=findWithProject("user",{"_id":x["for"]},{"username":1})[0]["username"]
+                else:
+                    temObj["isMe"]=False
+                    username=findWithProject("user",{"_id":x["by"]},{"username":1})[0]["username"]
+            temObj["username"]=username
+            temObj["time"]=x["time"].isoformat()+"Z"
+            retArr.append(temObj)
+        return {"data":retArr,"hasNext":(len(retArr)==10),"page":page}
