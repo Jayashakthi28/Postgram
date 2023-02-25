@@ -21,7 +21,7 @@ import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutline
 function FollowCard({userName,time,id}){
   const navigate=useNavigate();
   return (
-    <div className=" shadow-card p-2 rounded-sm m-3 cursor-pointer flex items-center" onClick={()=>{
+    <div className=" shadow-card p-2 rounded-sm m-3 cursor-pointer flex items-center" id={id} onClick={()=>{
       navigate(`/profile/${userName}`)
     }}>
       <PersonIcon sx={{color:"#a72ef8"}}/>
@@ -36,8 +36,8 @@ function FollowCard({userName,time,id}){
 function LikeCard({type,postId,username,time,id}){
   const navigate=useNavigate();
   return (
-    <div className=" shadow-card p-2 rounded-sm m-3 cursor-pointer flex items-center" onClick={()=>{
-      navigate(`/profile#${postId}`)
+    <div className=" shadow-card p-2 rounded-sm m-3 cursor-pointer flex items-center" id={id} onClick={()=>{
+      navigate(`/profile?post=${postId}`)
     }}>
       {type==="like" && <ThumbUpRoundedIcon sx={{color:"#f82e9d"}}/>}
       {type==="comment" && <ChatBubbleOutlineOutlinedIcon sx={{color:"#a72ef8"}}/>}
@@ -76,12 +76,12 @@ export default function Notification() {
     next={() => fetchNextPage()}
     hasMore={hasNextPage === undefined ? true : hasNextPage}
     loader={
-      <Skeleton
-        height={400}
-        width={400}
-        className=" mx-auto"
+      <div className=" mx-3">
+              <Skeleton
+        height={50}
         enableAnimation
       />
+      </div>
     }
     endMessage={
       <div className=" mx-auto w-[400px] text-center font-bubbler font-bold text-xl my-5">
@@ -93,8 +93,8 @@ export default function Notification() {
       <React.Fragment key={i}>
         {group.data.map((t, idx) => (
           <div>
-            {t.type==="follow" && <FollowCard userName={t.username} id={t.id} time={t.time}/>}
-            {(t.type==="like" || t.type==="comment")&&<LikeCard username={t.username} id={t.id} time={t.time} postId={t.postId} type={t.type}/>}
+            {t.type==="follow" && <FollowCard userName={t.username} id={t.id} time={t.time} key={t.id}/>}
+            {(t.type==="like" || t.type==="comment")&&<LikeCard username={t.username} id={t.id} time={t.time} postId={t.postId} type={t.type} key={t.id}/>}
           </div>
         ))}
       </React.Fragment>
