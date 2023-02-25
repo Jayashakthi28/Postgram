@@ -30,13 +30,30 @@ function Comment({username,comment}){
     )
 }
 
-export default function Comments({ postId='63f436fca3fafb799270e6d3', setCommentOpen }) {
+export default function Comments({ postId, setCommentOpen,username,forQuery="feed" }) {
   const commentGetter=async()=>{
     return await api.get(`/comments/${postId}`);
   }
   const commentPoster=async({comment})=>{
     return await api.post(`/comments/${postId}`,{comment})
   }
+  const postMutatorFunction = (oldData, variable, data) => {
+    let temp = { ...oldData };
+    console.log(oldData);
+    let retArr = [];
+    temp.data.forEach((t) => {
+        if (t.id === data.data.id) {
+          let temObj = { ...t };
+          temObj.likes = data.data.likes;
+          temObj.comments = data.data.comments;
+          retArr.push(temObj);
+        } else {
+          retArr.push(t);
+        }
+      });
+      temp.data = retArr;
+    return temp;
+  };
   const [userComment,setUserComment]=useState("");
   const queryClient=useQueryClient();
   const commentMutator = useMutation(commentPoster, {
@@ -47,26 +64,36 @@ export default function Comments({ postId='63f436fca3fafb799270e6d3', setComment
             temp.data.push({"username":api.getUserData()["username"],"comment":variable.comment})
             return temp;
         });
-        queryClient.setQueryData(["feed"],(oldData)=>{
-            let temp={...oldData}
-            temp.pages.forEach((currPage,i) => {
-                let currData=[]
-                currPage.data.forEach((t) => {
-                  if (t.id === updatedPostData.data.id) {
-                    let tempObj = { ...t };
-                    tempObj.likes=updatedPostData.data.likes;
-                    tempObj.comments=updatedPostData.data.comments;
-                    currData.push(tempObj);
-                  }
-                  else{
-                    currData.push(t);
-                  }
-                });
-                currPage.data=currData
-                temp.pages[i]=currPage;
-              });
-              return temp;
-        })
+        if(forQuery==="feed"){
+            queryClient.setQueryData(["feed"],(oldData)=>{
+                let temp={...oldData}
+                temp.pages.forEach((currPage,i) => {
+                    let currData=[]
+                    currPage.data.forEach((t) => {
+                      if (t.id === updatedPostData.data.id) {
+                        let tempObj = { ...t };
+                        tempObj.likes=updatedPostData.data.likes;
+                        tempObj.comments=updatedPostData.data.comments;
+                        currData.push(tempObj);
+                      }
+                      else{
+                        currData.push(t);
+                      }
+                    });
+                    currPage.data=currData
+                    temp.pages[i]=currPage;
+                  });
+                  return temp;
+            })
+        }
+        else{
+            if(username===undefined){
+                queryClient.setQueryData(["profilePost"],(oldData)=>(postMutatorFunction(oldData,variable,data)))
+            }
+            else{
+                queryClient.setQueryData(["profilePost",username],(oldData)=>(postMutatorFunction(oldData,variable,data)))
+            }
+        }
     }
   });
   const commentSubmitter=()=>{
