@@ -114,7 +114,7 @@ export default function Feed() {
   useEffect(() => {
     window.scroll(0, scrollYoffset);
   }, [commentOpen]);
-  if (data?.pages[lastPage]?.data.length === 0 && lastPage !== 2) {
+  if (data?.pages[lastPage]?.data.length === 0 && data?.pages[lastPage]?.type!=="random" ) {
     fetchNextPage();
   }
   return (
