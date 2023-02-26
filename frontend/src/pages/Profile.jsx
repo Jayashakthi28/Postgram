@@ -191,6 +191,7 @@ export default function Profile() {
           postId={currPostId}
           setCommentOpen={setcommentOpen}
           forQuery="profile"
+          username={id}
         />
       ) : profileData.isLoading || profilePosts.isLoading ? (
         <Loading />
