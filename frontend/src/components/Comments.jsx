@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   IconButton,
   Button,
@@ -39,7 +39,6 @@ export default function Comments({ postId, setCommentOpen,username,forQuery="fee
   }
   const postMutatorFunction = (oldData, variable, data) => {
     let temp = { ...oldData };
-    console.log(oldData);
     let retArr = [];
     temp.data.forEach((t) => {
         if (t.id === data.data.id) {
@@ -54,6 +53,7 @@ export default function Comments({ postId, setCommentOpen,username,forQuery="fee
       temp.data = retArr;
     return temp;
   };
+  const ref=useRef();
   const [userComment,setUserComment]=useState("");
   const queryClient=useQueryClient();
   const commentMutator = useMutation(commentPoster, {
@@ -101,6 +101,11 @@ export default function Comments({ postId, setCommentOpen,username,forQuery="fee
     commentMutator.mutateAsync({comment:userComment})
   }
   const comments=useQuery(["comments",postId],commentGetter)
+  useEffect(()=>{
+    if(ref.current){
+        ref.current.scrollIntoView({behavior: 'smooth'})
+    }
+  },[comments.dataUpdatedAt])
   return (
     <div className=" h-[calc(100vh-143px)] w-full absolute z-10 bg-slate-50 shadow-card">
       <div className="flex p-2 bg-purple-100 rounded-md justify-center relative shadow-card">
@@ -126,6 +131,7 @@ export default function Comments({ postId, setCommentOpen,username,forQuery="fee
         {
             !comments.isLoading&&!comments.isError&&(comments.data.data.length!==0)&&(comments.data.data.map((t,i)=>(<Comment comment={t.comment} username={t.username} key={i}/>)))
         }
+        <div ref={ref}></div>
       </div>
       <div className=" px-2 mt-2">
       <TextField
