@@ -5,6 +5,19 @@ from utils.db import findWithProject, findOne, insertOne, find, updateOne, aggre
 from datetime import datetime,timezone
 from bson import ObjectId
 from utils.notificationPutter import notificationPutter
+from sklearn.feature_extraction.text import TfidfVectorizer
+import joblib
+import os
+import pickle
+
+loaded_model = joblib.load(os.getcwd()+'/utils/logistic_regression_model.pkl')
+vectorizer = pickle.load(open(os.getcwd()+"/utils/vector.pickel", "rb"))
+
+def vectorizingFunc(comment):
+    arr=[comment]
+    vectorizedComment=vectorizer.transform(arr)
+    return vectorizedComment
+
 
 class Post(Resource):
     @is_registerd
@@ -205,16 +218,22 @@ class Comments(Resource):
         userId = findWithProject("user", {"email": email}, {"_id:1"})[0]["_id"]
         data = request.json
         comment = data["comment"]
-        obj = {
-            "comment": comment,
-            "user": userId
-        }
-        res = insertOne("comments", obj)
+        vectorizedComment=vectorizingFunc(comment)
         postId=ObjectId(postId)
-        commentId = res.inserted_id
-        updateOne("post", {"$push": {"comments": commentId}}, {"_id": postId})
+        prediction=loaded_model.predict(vectorizedComment)[0]
+        if(prediction==0):
+            obj = {
+                "comment": comment,
+                "user": userId
+            }
+            res = insertOne("comments", obj)
+            commentId = res.inserted_id
+            updateOne("post", {"$push": {"comments": commentId}}, {"_id": postId})
         postData=findWithProject("post",{"_id":postId},{"likes":1,"comments":1,"_id":1,"user":1})[0]
-        notificationPutter(postData["user"],userId,[postData["user"]],"comment",str(postId))
+        if(prediction==1):
+            notificationPutter(postData["user"],userId,[postData["user"],userId],"harassment",str(postId))
+        else:
+            notificationPutter(postData["user"],userId,[postData["user"]],"comment",str(postId))
         returnObj={}
         returnObj["comments"] = len(postData["comments"])
         returnObj["likes"] = len(postData["likes"])
