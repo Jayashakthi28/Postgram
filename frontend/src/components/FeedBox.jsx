@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect,useCallback } from "react";
 import PostBox from "./PostBox";
 import {
   IconButton,
@@ -14,6 +14,7 @@ import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutline
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpRoundedIcon from "@mui/icons-material/ThumbUpRounded";
+import { toPng } from 'html-to-image';
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import Skeleton from "react-loading-skeleton";
@@ -182,6 +183,7 @@ export default function FeedBox({
   let formatter = Intl.NumberFormat("en", { notation: "compact" });
   let boxShadow = "rgb(248,147,46)";
   const ref = useRef();
+  const postBoxRef=useRef();
   const onScreen = useOnScreen(ref, "-300px");
   const [visited, setVisited] = useState(false);
   useEffect(() => {
@@ -190,6 +192,20 @@ export default function FeedBox({
       setVisited(true);
     }
   }, [onScreen]);
+
+  const onDownloadClick = useCallback(() => {
+    if (postBoxRef.current === null || postBoxRef.current===undefined) {
+      return
+    }
+    toPng(postBoxRef.current, { cacheBust: true})
+      .then((dataUrl) => {
+        const link = document.createElement('a')
+        link.download = `${userName}-${postId}.png`
+        link.href = dataUrl
+        link.click()
+      })
+      .catch((err) => {})
+  }, [postBoxRef])
 
   return (
     <div className={` p-7 shadow-card w-fit mx-auto rounded-md my-4 transition-all`} ref={ref} id={postId}>
@@ -208,6 +224,7 @@ export default function FeedBox({
         fontColor={fontColor}
         font={font}
         key={postId}
+        reference={postBoxRef}
       />
       <Stack
         direction="row"
@@ -261,6 +278,9 @@ export default function FeedBox({
           <ActionCard
             icon={<FileDownloadOutlinedIcon color="" />}
             key={() => uuidv4()}
+            onClick={()=>{
+              onDownloadClick();
+            }}
           />
         </div>
       </Stack>
