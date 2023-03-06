@@ -51,17 +51,17 @@ const stringAvatar = (name) => {
   };
 };
 
-const ActionCard = ({ icon, text, className,onClick=()=>{} }) => {
+const ActionCard = ({ icon, text, className,onClick=()=>{},forButton=false,onTextClick=()=>{} }) => {
   return (
     <div
       className={` p-1 flex font-bubbler font-bold ${className} cursor-pointer mr-1 text-lg w-[80px]`}
-      onClick={onClick}
+      onClick={(!forButton)?onClick:()=>{}}
     >
       {text===undefined && <span></span>}
-      <IconButton sx={{ width: "30px", height: "30px", padding: "10px" }}>
+      <IconButton sx={{ width: "30px", height: "30px", padding: "10px" }} onClick={(forButton)?onClick:()=>{}}>
         {icon}
       </IconButton>
-      {text!==undefined && <span className=" ml-1">{text}</span>}
+      {text!==undefined && <span className=" ml-1" onClick={onTextClick}>{text}</span>}
     </div>
   );
 };
@@ -175,6 +175,7 @@ export default function FeedBox({
   page,
   mutator,
   setCommentOpen,
+  setLikeOpen,
   setPostId,
   setPageOffset,
   calculateVisited=true,
@@ -239,6 +240,7 @@ export default function FeedBox({
               icon={<ThumbUpRoundedIcon />}
               text={` ${formatter.format(likes)}`}
               key={() => uuidv4()}
+              forButton={true}
               onClick={() => {
                 mutator.mutateAsync({
                   page: page,
@@ -246,11 +248,17 @@ export default function FeedBox({
                   data: { postId: postId },
                 });
               }}
+              onTextClick={()=>{
+                setPageOffset(window.pageYOffset);
+                setPostId(postId);
+                setLikeOpen(true);
+              }}
             />
           ) : (
             <ActionCard
               icon={<ThumbUpOutlinedIcon />}
               text={`${formatter.format(likes)}`}
+              forButton={true}
               key={() => uuidv4()}
               onClick={() => {
                 mutator.mutateAsync({
@@ -258,6 +266,11 @@ export default function FeedBox({
                   forQuery: "like",
                   data: { postId: postId },
                 });
+              }}
+              onTextClick={()=>{
+                setPageOffset(window.pageYOffset);
+                setPostId(postId);
+                setLikeOpen(true);
               }}
             />
           )}

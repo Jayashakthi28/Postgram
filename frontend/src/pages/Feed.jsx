@@ -8,6 +8,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Comments from "../components/Comments";
+import Likes from "../components/Likes";
 
 let currTopic = "post";
 let currPage = 0;
@@ -76,6 +77,7 @@ export default function Feed() {
   });
   const queryClient = useQueryClient();
   const [commentOpen, setcommentOpen] = useState(false);
+  const [likesOpen,setlikesOpen]=useState(false);
   const [currPostId, setcurrPostId] = useState("");
   const [scrollYoffset, setscrollYoffset] = useState(window.pageYOffset);
   const fetchPosts = async ({ pageParam = { topic: "post", page: 0 } }) => {
@@ -113,7 +115,7 @@ export default function Feed() {
   let lastPage = data?.pages.length - 1;
   useEffect(() => {
     window.scroll(0, scrollYoffset);
-  }, [commentOpen]);
+  }, [commentOpen,likesOpen]);
   if (data?.pages[lastPage]?.data.length === 0 && data?.pages[lastPage]?.type!=="random" ) {
     fetchNextPage();
   }
@@ -122,10 +124,13 @@ export default function Feed() {
       {commentOpen && (
         <Comments setCommentOpen={setcommentOpen} postId={currPostId} />
       )}
+      {likesOpen && (
+        <Likes currPostId={currPostId} setLikeOpen={setlikesOpen}/>
+      )}
       <InfiniteScroll
         dataLength={data?.pages?.length || 0}
         className={` bg-[url('/src/assets/bg.svg')] bg-fixed ${
-          commentOpen
+          (commentOpen||likesOpen)
             ? "!h-[calc(100vh-144px)] !overflow-hidden"
             : "!h-auto !overflow-auto min-h-screen"
         }`}
@@ -163,6 +168,7 @@ export default function Feed() {
                 page={i}
                 mutator={postMutator}
                 setCommentOpen={setcommentOpen}
+                setLikeOpen={setlikesOpen}
                 setPostId={setcurrPostId}
                 setPageOffset={setscrollYoffset}
               />

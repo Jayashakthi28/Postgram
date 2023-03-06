@@ -17,6 +17,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import OverlayContainer from "../components/OverlayContainer";
 import FeedBox from "../components/FeedBox";
 import Comments from "../components/Comments";
+import Likes from "../components/Likes";
 
 export default function Profile() {
   const { id } = useParams();
@@ -64,6 +65,7 @@ export default function Profile() {
   };
 
   const [commentOpen, setcommentOpen] = useState(false);
+  const [likesOpen, setlikesOpen] = useState(false);
   const [currPostId, setcurrPostId] = useState("");
   const [scrollYoffset, setscrollYoffset] = useState(window.pageYOffset);
 
@@ -160,7 +162,7 @@ export default function Profile() {
 
   useEffect(() => {
     window.scroll(0, scrollYoffset);
-  }, [commentOpen]);
+  }, [commentOpen,likesOpen]);
 
   useEffect(() => {
     if (!profileData.isLoading && !profilePosts.isLoading) {
@@ -193,6 +195,8 @@ export default function Profile() {
           forQuery="profile"
           username={id}
         />
+      ) : likesOpen ? (
+        <Likes currPostId={currPostId} setLikeOpen={setlikesOpen}/>
       ) : profileData.isLoading || profilePosts.isLoading ? (
         <Loading />
       ) : profileData.data.status === "not registered" ||
@@ -369,6 +373,7 @@ export default function Profile() {
                   setCommentOpen={setcommentOpen}
                   setPostId={setcurrPostId}
                   setPageOffset={setscrollYoffset}
+                  setLikeOpen={setlikesOpen}
                   calculateVisited={false}
                   showFollowButton={false}
                 />

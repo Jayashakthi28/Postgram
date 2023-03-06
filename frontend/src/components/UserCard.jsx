@@ -8,6 +8,7 @@ export default function UserCard({
   isFollowing,
   setBoxStatus=null,
   mutator,
+  showButton=true
 }) {
   const stringToColor = (string) => {
     let hash = 0;
@@ -63,7 +64,7 @@ export default function UserCard({
           @{username}
         </Typography>
       </div>
-      {isFollowing ? (
+      {(isFollowing && showButton)? (
         <Button
           variant="contained"
           sx={{
@@ -82,7 +83,7 @@ export default function UserCard({
         >
           UnFollow
         </Button>
-      ) : (
+      ) : (showButton)?(
         <Button
           variant="contained"
           sx={{
@@ -101,7 +102,7 @@ export default function UserCard({
         >
           Follow
         </Button>
-      )}
+      ):(<></>)}
     </div>
   );
 }
