@@ -155,6 +155,21 @@ class Visited(Resource):
         return {"status": "success"}, 200
 
 
+class Likes(Resource):
+    @is_registerd
+    def get(email,self,postId=None):
+        myUserData = findWithProject("user", {"email": email}, {
+                                     "_id": 1, "following": 1})[0]
+        likes=findWithProject("post",{"_id":ObjectId(postId)},{"likes":1})[0]["likes"];
+        retArr=[]
+        for x in likes:
+            userData=findWithProject("user",{"_id":x},{"username":1,"name":1,"_id":0})[0];
+            userData["isFollowing"]=x in myUserData["following"];
+            retArr.append(userData)
+        print(retArr)
+        return {"data":retArr}
+
+
 class AllPosts(Resource):
     @is_registerd
     def get(email, self, username=None):

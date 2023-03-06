@@ -6,6 +6,7 @@ from routes.Auth import Register
 from routes.Post import Post
 from routes.Post import FollowingVisited
 from routes.Post import Like
+from routes.Post import Likes
 from routes.Post import UnLike
 from routes.Post import Random
 from routes.Post import Visited
@@ -38,6 +39,7 @@ app.secret_key = 'the random string'
 
 api.add_resource(Register,"/register")
 api.add_resource(AllPosts,"/allpost","/allpost/<username>")
+api.add_resource(Likes,"/likes/<postId>")
 api.add_resource(Like,"/like")
 api.add_resource(UnLike,"/unlike")
 api.add_resource(Visited,"/visited/<postId>")
