@@ -66,7 +66,7 @@ export default function EmailVerify() {
   };
 
   return (
-    <div className=" w-full h-[calc(100vh-83.27px)] flex flex-col justify-center items-center">
+    <div className=" w-full h-[calc(100vh-83.27px)] flex flex-col justify-center items-center bg-fixed bg-bottom bg-no-repeat bg-[url('/src/assets/waves-bg.svg')]">
       {verifyEmail.isPressed && !verifyEmail.isSent && (
         <Alert severity="info" className=" m-3">
           Request sent to the API
@@ -77,7 +77,7 @@ export default function EmailVerify() {
           Successfully sent
         </Alert>
       )}
-      <div className=" flex justify-center items-center p-11 backdrop-blur-sm bg-white flex-col shadow-gray-800 shadow-card rounded-lg mx-3">
+      <div className=" flex justify-center items-center p-11 backdrop-blur-sm bg-white flex-col shadow-card rounded-lg mx-3">
         <Typography
           variant="h5"
           component="h5"

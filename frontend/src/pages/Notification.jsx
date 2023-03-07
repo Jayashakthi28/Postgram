@@ -100,6 +100,7 @@ export default function Notification() {
    useEffect(()=>{
     if(!isLoading){
       let firstPost=data.pages[0].data[0]
+      if(!firstPost) return;
       api.post("/notification/update",{"time":firstPost.time});
       queryClient.setQueryData("notificationBadge",()=>({"unread":0}));
     }
