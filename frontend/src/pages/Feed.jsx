@@ -98,7 +98,7 @@ export default function Feed() {
     status,
   } = useInfiniteQuery("feed", fetchPosts, {
     getNextPageParam: (lastPage, pages) => {
-      if (lastPage.data.length === 0 || lastPage.hasNext === false) {
+      if (lastPage.data?.length === 0 || lastPage.hasNext === false) {
         if (lastPage.type === "recommended") {
           return { topic: "visited", page: 0 };
         } else if (lastPage.type === "visited") {
@@ -112,11 +112,11 @@ export default function Feed() {
       }
     },
   });
-  let lastPage = data?.pages.length - 1;
+  let lastPage = data?.pages?.length - 1;
   useEffect(() => {
     window.scroll(0, scrollYoffset);
   }, [commentOpen,likesOpen]);
-  if (data?.pages[lastPage]?.data.length === 0 && data?.pages[lastPage]?.type!=="random" ) {
+  if (data?.pages[lastPage]?.data?.length === 0 && data?.pages[lastPage]?.type!=="random" ) {
     fetchNextPage();
   }
   return (
@@ -149,7 +149,7 @@ export default function Feed() {
       >
         {data?.pages.map((group, i) => (
           <React.Fragment key={i}>
-            {group.data.map((t, idx) => (
+            {group.data?.map((t, idx) => (
               <FeedBox
                 quote={t.text}
                 bgColor={t.background}

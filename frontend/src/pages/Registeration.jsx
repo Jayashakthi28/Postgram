@@ -17,6 +17,10 @@ export default function Registeration() {
   const [apiResponse, setapiResponse] = useState({ status: "loading" });
   const navigate = useNavigate();
   const inputHandler = (value, filed) => {
+    value=value.replace(/[^a-z0-9 ]/gi,'');
+    if(filed==="name" && value!=="" && value.length>30){
+      return;
+    }
     setFormData((prev) => {
       let newData = { ...prev };
       newData[filed] = value;
@@ -85,7 +89,7 @@ export default function Registeration() {
   };
 
   return (
-    <div className="flex items-center justify-center h-[calc(100vh-200px)] flex-col">
+    <div className="flex items-center justify-center h-[calc(100vh-82px)] max-h-max flex-col overflow-clip bg-[url('/src/assets/waves-bg.svg')] bg-bottom bg-no-repeat">
       {formApiSubmit && formApiSuccess === "" && (
         <Alert severity="info" className=" my-1">
           Request sent to API
@@ -101,7 +105,7 @@ export default function Registeration() {
           Try again after some time
         </Alert>
       )}
-      <form className=" flex flex-col flex-wrap w-3/6 min-w-max p-3 text-center shadow-lg shadow-purple-600 rounded-lg">
+      <form className=" flex flex-col flex-wrap p-3 text-center shadow-card rounded-md mx-2 bg-white">
         <Typography component="h3" variant="h5" fontWeight="bold">
           Before you proceed choose your preferences...
         </Typography>
@@ -133,7 +137,7 @@ export default function Registeration() {
           name="topics"
           options={formData.options}
           placeholder="Choose Tags"
-          className=" font-bubbler my-1"
+          className=" font-bubbler my-1 max-w-[412px]"
           onChange={(e) => {
             let userArr = e.map((t) => t.value);
             console.log(userArr);
@@ -154,6 +158,9 @@ export default function Registeration() {
           variant="outlined"
           color="primary"
           className=" self-center !my-1"
+          sx={{
+            height:"40px"
+          }}
           disabled={!allOk || formApiSubmit}
           onClick={formSubmitter}
         >
