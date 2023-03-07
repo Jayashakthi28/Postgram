@@ -26,7 +26,6 @@ export default function Likes({currPostId,setLikeOpen}) {
     onSuccess:(data,variable)=>{
       queryClient.setQueryData(["likes",currPostId],(oldData)=>{
         let temp={...oldData}
-        console.log(temp);
         let retArr=[]
         temp.data.forEach(t=>{
           if(t.username===variable.username){

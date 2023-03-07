@@ -29,7 +29,6 @@ export default function ColourPicker({
           setValue(e.target.value);
         }}
         onClick={(e) => {
-          console.log("clicking")
           setIsfocused(true);
         }}
       />

@@ -140,7 +140,6 @@ export default function Registeration() {
           className=" font-bubbler my-1 max-w-[412px]"
           onChange={(e) => {
             let userArr = e.map((t) => t.value);
-            console.log(userArr);
             setuserSelectedTopic(userArr);
           }}
           theme={(theme) => ({
