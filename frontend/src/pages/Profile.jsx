@@ -241,7 +241,7 @@ export default function Profile() {
             <div className=" flex max-w-fit mt-5 postBox:flex-wrap mx-auto shadow-card hover:shadow-hover transition-all rounded-md p-5 justify-center items-center overflow-clip">
               <Avatar {...stringAvatar(profileData.data.name)} />
               <div className="flex flex-col mx-6">
-                <div className=" flex flex-col w-full flex-wrap postBox:justify-center items-center">
+                <div className=" flex flex-col w-full flex-wrap postBox:justify-center postBox:items-center">
                   <Typography component="h2" variant="h4" fontWeight="600" sx={{
                     maxWidth:`${(window.innerWidth>500)?"500px":"200px"}`,
                     wordWrap:"break-word",

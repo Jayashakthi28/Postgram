@@ -120,7 +120,7 @@ export default function Notification() {
       </div>
     }
     endMessage={
-      <div className=" mx-auto w-[400px] text-center font-bubbler font-bold text-xl my-5">
+      <div className=" mx-auto text-center font-bubbler font-bold text-xl my-5">
         Nothing to show more 🫡
       </div>
     }
