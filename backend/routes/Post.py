@@ -166,7 +166,6 @@ class Likes(Resource):
             userData=findWithProject("user",{"_id":x},{"username":1,"name":1,"_id":0})[0];
             userData["isFollowing"]=x in myUserData["following"];
             retArr.append(userData)
-        print(retArr)
         return {"data":retArr}
 
 

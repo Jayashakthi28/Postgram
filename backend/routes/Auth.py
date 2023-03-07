@@ -27,7 +27,6 @@ def signupUtil(data):
 
 def usernameGenerator(name):
     new_name=str(name).lower()
-    print(new_name)
     user_name="".join(ch for ch in new_name if ch.isalnum())
     user_name+=str(randint(1000,9999))
     res=findOne("user",{"username":user_name})

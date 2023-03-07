@@ -176,7 +176,6 @@ class Notification(Resource):
     @is_registerd
     def get(email,self,page):
         userId=findWithProject("user",{"email":email},{"_id":1})[0]["_id"]
-        print(userId)
         data=findWithSort("notifications",{"users":userId},"time",-1,int(page))
         retArr=[]
         for x in data:

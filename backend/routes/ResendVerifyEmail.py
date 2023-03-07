@@ -24,7 +24,6 @@ class Status(Resource):
     def post(self):
         data = request.json
         id = data["id"]
-        print(id)
         headers = authHeader()
         status = requests.get(
             f"https://dev-wi88816px38jci0q.us.auth0.com/api/v2/jobs/{id}",

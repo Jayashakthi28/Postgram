@@ -6,6 +6,5 @@ class Topic(Resource):
         res=findWithProject("tags",{},{"topic":1})
         topics=[]
         for x in res:
-            print(x)
             topics.append(x["topic"])
         return {"data":topics},200

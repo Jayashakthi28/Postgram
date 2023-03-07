@@ -6,7 +6,6 @@ def is_registerd(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         email=request.headers.get("email");
-        print(email)
         res=findOne("user",{"email":email})
         if not res:
             resp={"status":"not registered"}
