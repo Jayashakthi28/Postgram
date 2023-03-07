@@ -199,7 +199,16 @@ class Notification(Resource):
             temObj["time"]=x["time"].isoformat()+"Z"
             retArr.append(temObj)
         return {"data":retArr,"hasNext":(len(retArr)==10),"page":page}
-    
+
+
+class Edit(Resource):
+    @is_registerd
+    def post(email,self):
+        data=request.json
+        name=data["name"]
+        updateOne("user",{"$set":{"name":name}},{"email":email});
+        return {"status":"success"}
+
 class NotificationUpdate(Resource):
     @is_registerd
     def post(email,self):

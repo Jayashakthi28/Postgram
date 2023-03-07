@@ -22,6 +22,7 @@ from routes.User import TagFollow
 from routes.User import TagUnFollow
 from routes.User import Notification
 from routes.User import NotificationUpdate
+from routes.User import Edit
 from routes.UserName import UserName
 from routes.User import Followers
 from routes.User import Following
@@ -39,6 +40,7 @@ app.secret_key = 'the random string'
 
 api.add_resource(Register,"/register")
 api.add_resource(AllPosts,"/allpost","/allpost/<username>")
+api.add_resource(Edit,"/profile/edit")
 api.add_resource(Likes,"/likes/<postId>")
 api.add_resource(Like,"/like")
 api.add_resource(UnLike,"/unlike")

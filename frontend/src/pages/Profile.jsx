@@ -4,6 +4,9 @@ import {
   Button,
   IconButton,
   useStepContext,
+  Modal,
+  Box,
+  TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -68,6 +71,10 @@ export default function Profile() {
   const [likesOpen, setlikesOpen] = useState(false);
   const [currPostId, setcurrPostId] = useState("");
   const [scrollYoffset, setscrollYoffset] = useState(window.pageYOffset);
+  const [name,setname]=useState("");
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const putPostData = async ({ page, forQuery, data }) => {
     if (forQuery === "follow") {
@@ -101,6 +108,10 @@ export default function Profile() {
     return temp;
   };
 
+  const profileMutatorFunction = ({name}) =>{
+    return api.post("/profile/edit",{"name":name});
+  }
+
   const postMutator = useMutation(putPostData, {
     onSuccess: (data, variable) => {
       if (id === undefined)
@@ -117,6 +128,20 @@ export default function Profile() {
       postMutator.reset();
     },
   });
+
+
+  const profileMutator = useMutation(profileMutatorFunction,{
+    onSuccess:(data,variable)=>{
+      queryClient.setQueryData(["profile"],(oldValue)=>{
+        let temp={...oldValue};
+        temp["name"]=variable.name;
+        return temp;
+      });
+      let temp=api.getUserData();
+      temp["name"]=name;
+      api.setUserData(temp);
+    }
+  })
 
   const getPosts = async () => {
     let userPosts = {};
@@ -162,10 +187,11 @@ export default function Profile() {
 
   useEffect(() => {
     window.scroll(0, scrollYoffset);
-  }, [commentOpen,likesOpen]);
+  }, [commentOpen, likesOpen]);
 
   useEffect(() => {
     if (!profileData.isLoading && !profilePosts.isLoading) {
+      setname(profileData.data?.name);
       const postId = queryParameter.get("post");
       if (postId) {
         const ele = document.getElementById(postId);
@@ -196,7 +222,7 @@ export default function Profile() {
           username={id}
         />
       ) : likesOpen ? (
-        <Likes currPostId={currPostId} setLikeOpen={setlikesOpen}/>
+        <Likes currPostId={currPostId} setLikeOpen={setlikesOpen} />
       ) : profileData.isLoading || profilePosts.isLoading ? (
         <Loading />
       ) : profileData.data.status === "not registered" ||
@@ -334,6 +360,7 @@ export default function Profile() {
                         fontWeight: "600",
                         width: "200px",
                       }}
+                      onClick={handleOpen}
                     >
                       Edit Profile
                     </Button>
@@ -351,6 +378,39 @@ export default function Profile() {
                 )}
               </div>
             </div>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <div className=" absolute top-1/2 -translate-y-1/2 flex items-center flex-col justify-center p-2 rounded-md left-1/2 -translate-x-1/2 bg-white min-w-[250px] h-auto">
+                  <Typography variant="h6" component="h6">
+                    Edit Profile
+                  </Typography>
+                  <TextField placeholder="Name" variant="outlined" value={name} label="Name" sx={{
+                    "marginTop":"15px"
+                  }} onChange={(e)=>{
+                    if(e.target.value.match(/[<>]/g) || e.target.value.length>20) return;
+                    setname(e.target.value);
+                  }}/>
+                  <TextField value={api.getUserData()["username"]} disabled label="Username" sx={{
+                    "marginTop":"15px"
+                  }}/>
+                  <TextField value={api.getUserData()["email"]} disabled label="Email" sx={{
+                    "marginTop":"15px"
+                  }}/>
+                  <Button variant="contained" sx={{
+                    "marginTop":"15px"
+                  }}
+                  disabled={name.trim()===api.getUserData()["name"] || name.trim()===""}
+                  onClick={()=>{
+                    profileMutator.mutate({"name":name.trim()})
+                    handleClose();
+                  }}
+                  >Submit</Button>
+              </div>
+            </Modal>
             <div className=" flex flex-wrap">
               {profilePosts?.data?.data.map((t, i) => (
                 <FeedBox
