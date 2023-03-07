@@ -21,6 +21,7 @@ module.exports = {
         // => @media (min-width: 1024px) { ... }
 
         xl: "1280px",
+        postBox: {min:"0px",max:"500px"},
         // => @media (min-width: 1280px) { ... }
       },
       boxShadow:{

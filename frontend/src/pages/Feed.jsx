@@ -142,7 +142,7 @@ export default function Feed() {
           </div>
         }
         endMessage={
-          <div className=" mx-auto w-[400px] text-center font-bubbler font-bold text-2xl my-5">
+          <div className=" mx-auto text-center font-bubbler font-bold text-2xl my-5">
             Thats all we got for you 😬
           </div>
         }

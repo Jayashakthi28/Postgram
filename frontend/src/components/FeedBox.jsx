@@ -38,9 +38,9 @@ const stringAvatar = (name) => {
   return {
     sx: {
       bgcolor: stringToColor(name),
-      width: "50px",
-      height: "50px",
-      fontSize: "1.2rem",
+      width: `${(window.innerWidth>500)?"50px":"25px"}`,
+      height: `${(window.innerWidth>500)?"50px":"25px"}`,
+      fontSize: `${(window.innerWidth>500)?"large":"small"}`,
       fontWeight: "700",
     },
     children: `${name.split(" ")[0][0]}${
@@ -54,7 +54,7 @@ const stringAvatar = (name) => {
 const ActionCard = ({ icon, text, className,onClick=()=>{},forButton=false,onTextClick=()=>{} }) => {
   return (
     <div
-      className={` p-1 flex font-bubbler font-bold ${className} cursor-pointer mr-1 text-lg w-[80px]`}
+      className={` p-1 flex font-bubbler font-bold ${className} cursor-pointer mr-1 text-lg w-[80px] postBox:w-[55px]`}
       onClick={(!forButton)?onClick:()=>{}}
     >
       {text===undefined && <span></span>}
@@ -77,7 +77,7 @@ const UserViewer = ({ username, name, isFollowing, mutator, page,showFollowButto
         component="h6"
         sx={{
           whiteSpace: "nowrap",
-          width: "220px",
+          width: `${(window.innerWidth>500)?"229px":"80px"}`,
           overflow: "hidden",
           marginLeft: "10px",
           marginRight: "10px",
@@ -85,6 +85,7 @@ const UserViewer = ({ username, name, isFollowing, mutator, page,showFollowButto
           fontFamily: "Bubbler",
           fontWeight: "bold",
           cursor: "pointer",
+          fontSize:`${(window.innerWidth>500)?"large":"small"}`,
         }}
         onClick={() => {
           navigate(`/profile/${username}`);
@@ -96,11 +97,13 @@ const UserViewer = ({ username, name, isFollowing, mutator, page,showFollowButto
       {isFollowing ? (
         showFollowButton&&<Button
           variant="contained"
+          size={`${window.innerWidth>500}?"large":"small"`}
           sx={{
             backgroundColor: "#f82e9d",
             color: "white",
             fontWeight: "600",
-            width: "80px",
+            fontSize:`${(window.innerWidth>500)?"medium":"small"}`,
+            width: `${(window.innerWidth>500)?"80px":"30px"}`,
           }}
           onClick={() => {
             mutator.mutateAsync({
@@ -115,11 +118,13 @@ const UserViewer = ({ username, name, isFollowing, mutator, page,showFollowButto
       ) : (
         showFollowButton&&<Button
           variant="contained"
+          size={`${window.innerWidth>500}?"large":"small"`}
           sx={{
             backgroundColor: "#a72ef8",
             color: "white",
             fontWeight: "600",
-            width: "80px",
+            fontSize:`${(window.innerWidth>500)?"medium":"small"}`,
+            width: `${(window.innerWidth>500)?"80px":"30px"}`,
           }}
           onClick={() => {
             mutator.mutateAsync({
@@ -209,7 +214,7 @@ export default function FeedBox({
   }, [postBoxRef])
 
   return (
-    <div className={` p-7 shadow-card w-fit mx-auto rounded-md my-4 transition-all`} ref={ref} id={postId}>
+    <div className={` p-7 postBox:p-3 postBox:w-[225px] overflow-clip shadow-card w-fit mx-auto rounded-md my-4 transition-all`} ref={ref} id={postId}>
       <UserViewer
         name={name}
         username={userName}
@@ -299,7 +304,7 @@ export default function FeedBox({
       </Stack>
       <Stack
         direction="row"
-        sx={{ width: "400px" }}
+        sx={{ width: `${(+window.innerWidth>500)?"400px":"200px"}` }}
         flexWrap={"wrap"}
         alignItems="center"
       >

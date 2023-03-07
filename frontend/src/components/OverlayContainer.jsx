@@ -175,7 +175,7 @@ export default function OverlayContainer({ currentFocus, setBoxStatus, id }) {
             label="😎 Followers"
             value="followers"
             sx={{
-              fontSize: "1.2rem",
+              fontSize:`${window.innerWidth>500?"1.2rem":"small"}`,
               fontWeight: "600",
             }}
           />
@@ -183,7 +183,7 @@ export default function OverlayContainer({ currentFocus, setBoxStatus, id }) {
             label="😇 Following"
             value="following"
             sx={{
-              fontSize: "1.2rem",
+              fontSize:`${window.innerWidth>500?"1.2rem":"small"}`,
               fontWeight: "600",
             }}
           />
@@ -191,7 +191,7 @@ export default function OverlayContainer({ currentFocus, setBoxStatus, id }) {
             label="＃ Tags"
             value="tags"
             sx={{
-              fontSize: "1.2rem",
+              fontSize:`${window.innerWidth>500?"1.2rem":"small"}`,
               fontWeight: "600",
             }}
           />
@@ -200,7 +200,7 @@ export default function OverlayContainer({ currentFocus, setBoxStatus, id }) {
           sx={{
             height: "100%",
             position: "absolute",
-            right: "20px",
+            right: "5px",
             top: "0",
           }}
           onClick={() => {

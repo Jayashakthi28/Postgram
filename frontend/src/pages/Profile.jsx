@@ -45,9 +45,9 @@ export default function Profile() {
     return {
       sx: {
         bgcolor: stringToColor(name),
-        width: 120,
-        height: 120,
-        fontSize: "4rem",
+        width: `${window.innerWidth>500?"120px":"60px"}`,
+        height: `${window.innerWidth>500?"120px":"60px"}`,
+        fontSize: `${window.innerWidth>500?"4rem":"1rem"}`,
         fontWeight: "700",
       },
       children: `${name.split(" ")[0][0]}${
@@ -238,18 +238,24 @@ export default function Profile() {
       ) : (
         <>
           <div className=" p-1 bg-gray-100 min-h-[calc(100vh-142px)]">
-            <div className=" flex min-w-[500px] max-w-fit mt-5 mx-auto shadow-card hover:shadow-hover transition-all rounded-md p-5 justify-center items-center">
+            <div className=" flex max-w-fit mt-5 postBox:flex-wrap mx-auto shadow-card hover:shadow-hover transition-all rounded-md p-5 justify-center items-center overflow-clip">
               <Avatar {...stringAvatar(profileData.data.name)} />
               <div className="flex flex-col mx-6">
-                <div className=" flex flex-col">
-                  <Typography component="h2" variant="h4" fontWeight="600">
+                <div className=" flex flex-col w-full flex-wrap postBox:justify-center items-center">
+                  <Typography component="h2" variant="h4" fontWeight="600" sx={{
+                    maxWidth:`${(window.innerWidth>500)?"500px":"200px"}`,
+                    wordWrap:"break-word",
+                    fontSize:`${window.innerWidth>500?"none":"large"}`
+                  }}>
                     {profileData.data.name}
                   </Typography>
-                  <Typography component="h2" variant="h6" fontWeight="500">
+                  <Typography component="h2" variant="h6" fontWeight="500" sx={{
+                    fontSize:`${window.innerWidth>500?"none":"small"}`
+                  }}>
                     @{profileData.data.username}
                   </Typography>
                 </div>
-                <div className="flex w-full justify-items-start mt-4">
+                <div className="flex w-full justify-items-start postBox:justify-center mt-4">
                   <Typography
                     component="h2"
                     variant="h5"
@@ -260,6 +266,7 @@ export default function Profile() {
                         color: "#a72ef8",
                       },
                       transition: "all 200ms ease",
+                      fontSize:`${window.innerWidth>500?"none":"large"}`
                     }}
                     className=" cursor-pointer"
                     onClick={(e) => {
@@ -279,6 +286,8 @@ export default function Profile() {
                         color: "#a72ef8",
                       },
                       transition: "all 200ms ease",
+                      fontSize:`${window.innerWidth>500?"none":"large"}`
+
                     }}
                     className=" cursor-pointer"
                     onClick={(e) => {
@@ -298,6 +307,7 @@ export default function Profile() {
                         color: "#a72ef8",
                       },
                       transition: "all 200ms ease",
+                      fontSize:`${window.innerWidth>500?"none":"large"}`
                     }}
                     className=" cursor-pointer"
                     onClick={(e) => {
