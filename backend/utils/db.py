@@ -1,10 +1,9 @@
 import pymongo
 from dotenv import load_dotenv
 import os
-
-client = pymongo.MongoClient('localhost', 27017)
+load_dotenv()
+client = pymongo.MongoClient(os.environ.get("MONGODB_CONNECTION_STRING"))
 db = client['postgram']
-
 
 def insertOne(collection, data):
     col = db[collection]
