@@ -57,6 +57,9 @@ const API = () => {
     "/add": "add",
   };
   const headerMapper = (val,isNav=false) => {
+    if(val==="/register" || val==="/verify"){
+      return false;
+    }
     if(routeJson[val]===false && !isNav){
       return "home";
     }
