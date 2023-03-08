@@ -149,9 +149,7 @@ class Visited(Resource):
     def get(email, self, postId=None):
         postId = ObjectId(postId)
         userId = findWithProject("user", {"email": email}, {"_id:1"})[0]["_id"]
-        data=updateOne("post",{"$pullAll":{"visited":[userId]}},{"_id":postId})
-        data = updateOne(
-            "post", {"$push": {"visited": userId}}, {"_id": postId})
+        data=updateOne("post",{"$addToSet":{"visited":userId}},{"_id":postId})
         return {"status": "success"}, 200
 
 
@@ -242,7 +240,7 @@ class Comments(Resource):
             }
             res = insertOne("comments", obj)
             commentId = res.inserted_id
-            updateOne("post", {"$push": {"comments": commentId}}, {"_id": postId})
+            updateOne("post", {"$addToSet": {"comments": commentId}}, {"_id": postId})
         postData=findWithProject("post",{"_id":postId},{"likes":1,"comments":1,"_id":1,"user":1})[0]
         if(prediction==1):
             notificationPutter(postData["user"],userId,[postData["user"],userId],"harassment",str(postId))
@@ -279,8 +277,7 @@ class Like(Resource):
         postId = ObjectId(data["postId"])
         userID = findWithProject(
             "user", {"email": email}, {"_id": 1})[0]["_id"]
-        updateOne("post", {"$pullAll": {"likes": [userID]}}, {"_id": postId})
-        updateOne("post", {"$push": {"likes": userID}}, {"_id": postId})
+        updateOne("post", {"$addToSet": {"likes": userID}}, {"_id": postId})
         postData=findWithProject("post",{"_id":postId},{"likes":1,"comments":1,"_id":1,"user":1})[0]
         notificationPutter(postData["user"],userID,[postData["user"]],"like",str(postId))
         returnObj={}

@@ -3,7 +3,9 @@ from flask import request
 import json
 import requests
 from utils.auth0Tokener import authHeader
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 class Resend(Resource):
 
@@ -11,8 +13,9 @@ class Resend(Resource):
         data = request.json
         body = {"user_id": data["user_id"]}
         headers = authHeader()
+        url=f'{os.environ.get("AUTH0_DOMAIN")}/api/v2/jobs/verification-email'
         emailStatus = requests.post(
-            "https://dev-wi88816px38jci0q.us.auth0.com/api/v2/jobs/verification-email",
+            url,
             json=body,
             headers=headers)
         emailStatus = emailStatus.json()

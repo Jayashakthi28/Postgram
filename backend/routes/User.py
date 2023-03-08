@@ -56,7 +56,7 @@ class Follow(Resource):
         username = data["username"]
         userID = findWithProject(
             "user", {"username": username}, {"_id": 1})[0]["_id"]
-        updateOne("user", {"$push": {"following": userID}}, {"email": email})
+        updateOne("user", {"$addToSet": {"following": userID}}, {"email": email})
         notificationPutter(userID,myUserId,[userID],"follow")
         return {"status": "success"}, 200
 
@@ -159,7 +159,7 @@ class TagFollow(Resource):
     def post(email, self):
         data = request.json
         tag = data["tag"]
-        updateOne("user", {"$push": {"tags": tag}}, {"email": email})
+        updateOne("user", {"$addToSet": {"tags": tag}}, {"email": email})
         return {"status": "success"}, 200
 
 
