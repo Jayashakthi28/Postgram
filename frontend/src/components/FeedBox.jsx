@@ -190,7 +190,7 @@ export default function FeedBox({
   let boxShadow = "rgb(248,147,46)";
   const ref = useRef();
   const postBoxRef=useRef();
-  const onScreen = useOnScreen(ref, "-300px");
+  const onScreen = useOnScreen(ref, "-200px");
   const [visited, setVisited] = useState(false);
   useEffect(() => {
     if (onScreen && !visited && calculateVisited) {

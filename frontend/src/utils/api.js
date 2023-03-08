@@ -17,7 +17,6 @@ const API = () => {
     let tem={...userData};
     tem["username"]=temUserName;
     userData=tem;
-    axios.defaults.headers.common["username"]=username;
   }
 
   const setEmail = (temEmail) => {

@@ -93,6 +93,7 @@ export default function Comments({ postId, setCommentOpen,username,forQuery="fee
     }
   });
   const commentSubmitter=()=>{
+    if(userComment.trim().length===0) return;
     setUserComment("");
     commentMutator.mutateAsync({comment:userComment})
   }
