@@ -129,7 +129,7 @@ export default function Feed() {
       )}
       <InfiniteScroll
         dataLength={data?.pages?.length || 0}
-        className={` bg-[url('/src/assets/bg.svg')] bg-fixed ${
+        className={` bg-[url('/src/assets/bg.svg')] bg-fixed bg-cover bg-no-repeat ${
           (commentOpen||likesOpen)
             ? "!h-[calc(100vh-144px)] !overflow-hidden"
             : "!h-auto !overflow-auto min-h-screen"

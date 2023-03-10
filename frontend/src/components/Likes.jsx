@@ -10,7 +10,28 @@ export default function Likes({currPostId,setLikeOpen}) {
   const likesFetcher=()=>{
     return api.get(`/likes/${currPostId}`);
   }
-  const likes=useQuery(["likes",currPostId],likesFetcher);
+  const likes=useQuery(["likes",currPostId],likesFetcher,{
+    onSuccess:(data)=>{
+      queryClient.setQueryData(["feed"],(oldData)=>{
+        let temp = { ...oldData };
+          temp.pages.forEach((currPage, i) => {
+            let currData = [];
+            currPage.data.forEach((t) => {
+              if (t.id === currPostId) {
+                let tempObj = { ...t };
+                tempObj.likes=data.data.length;
+                currData.push(tempObj);
+              } else {
+                currData.push(t);
+              }
+            });
+            currPage.data = currData;
+            temp.pages[i] = currPage;
+          });
+        return temp;
+      })
+    }
+  });
 
   const putProfileData = async ({ isFollow, username }) => {
     let userData = {};
