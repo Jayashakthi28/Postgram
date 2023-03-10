@@ -41,8 +41,8 @@ export default function Header({ headerValue, setHeaderValue }) {
             indicatorColor="secondary"
             textColor="secondary"
             scrollButtons="auto"
-            centered={window.screen.width>=500}
-            variant={(window.screen.width<500)?"scrollable":"standard"}
+            centered={window.innerWidth>=500}
+            variant={(window.innerWidth<500)?"scrollable":"standard"}
             allowScrollButtonsMobile
           >
             <Tab

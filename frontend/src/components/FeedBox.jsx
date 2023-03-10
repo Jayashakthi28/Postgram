@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect,useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import PostBox from "./PostBox";
 import {
   IconButton,
@@ -14,7 +14,7 @@ import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutline
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpRoundedIcon from "@mui/icons-material/ThumbUpRounded";
-import { toPng } from 'html-to-image';
+import { toPng } from "html-to-image";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import Skeleton from "react-loading-skeleton";
@@ -38,9 +38,9 @@ const stringAvatar = (name) => {
   return {
     sx: {
       bgcolor: stringToColor(name),
-      width: `${(window.innerWidth>500)?"50px":"25px"}`,
-      height: `${(window.innerWidth>500)?"50px":"25px"}`,
-      fontSize: `${(window.innerWidth>500)?"large":"small"}`,
+      width: `${window.innerWidth > 500 ? "50px" : "25px"}`,
+      height: `${window.innerWidth > 500 ? "50px" : "25px"}`,
+      fontSize: `${window.innerWidth > 500 ? "large" : "small"}`,
       fontWeight: "700",
     },
     children: `${name.split(" ")[0][0]}${
@@ -51,23 +51,43 @@ const stringAvatar = (name) => {
   };
 };
 
-const ActionCard = ({ icon, text, className,onClick=()=>{},forButton=false,onTextClick=()=>{} }) => {
+const ActionCard = ({
+  icon,
+  text,
+  className,
+  onClick = () => {},
+  forButton = false,
+  onTextClick = () => {},
+}) => {
   return (
     <div
       className={` p-1 flex font-bubbler font-bold ${className} cursor-pointer mr-1 text-lg w-[80px] postBox:w-[55px]`}
-      onClick={(!forButton)?onClick:()=>{}}
+      onClick={!forButton ? onClick : () => {}}
     >
-      {text===undefined && <span></span>}
-      <IconButton sx={{ width: "30px", height: "30px", padding: "10px" }} onClick={(forButton)?onClick:()=>{}}>
+      {text === undefined && <span></span>}
+      <IconButton
+        sx={{ width: "30px", height: "30px", padding: "10px" }}
+        onClick={forButton ? onClick : () => {}}
+      >
         {icon}
       </IconButton>
-      {text!==undefined && <span className=" ml-1" onClick={onTextClick}>{text}</span>}
+      {text !== undefined && (
+        <span className=" ml-1" onClick={onTextClick}>
+          {text}
+        </span>
+      )}
     </div>
   );
 };
 
-const UserViewer = ({ username, name, isFollowing, mutator, page,showFollowButton }) => {
-  
+const UserViewer = ({
+  username,
+  name,
+  isFollowing,
+  mutator,
+  page,
+  showFollowButton,
+}) => {
   const navigate = useNavigate();
   return (
     <div className=" p-2 flex w-full items-center">
@@ -77,7 +97,7 @@ const UserViewer = ({ username, name, isFollowing, mutator, page,showFollowButto
         component="h6"
         sx={{
           whiteSpace: "nowrap",
-          width: `${(window.innerWidth>500)?"229px":"80px"}`,
+          width: `${window.innerWidth > 500 ? "229px" : "80px"}`,
           overflow: "hidden",
           marginLeft: "10px",
           marginRight: "10px",
@@ -85,7 +105,7 @@ const UserViewer = ({ username, name, isFollowing, mutator, page,showFollowButto
           fontFamily: "Bubbler",
           fontWeight: "bold",
           cursor: "pointer",
-          fontSize:`${(window.innerWidth>500)?"large":"small"}`,
+          fontSize: `${window.innerWidth > 500 ? "large" : "small"}`,
         }}
         onClick={() => {
           navigate(`/profile/${username}`);
@@ -94,49 +114,51 @@ const UserViewer = ({ username, name, isFollowing, mutator, page,showFollowButto
         {username}
       </Typography>
 
-      {isFollowing ? (
-        showFollowButton&&<Button
-          variant="contained"
-          size={`${window.innerWidth>500}?"large":"small"`}
-          sx={{
-            backgroundColor: "#f82e9d",
-            color: "white",
-            fontWeight: "600",
-            fontSize:`${(window.innerWidth>500)?"medium":"small"}`,
-            width: `${(window.innerWidth>500)?"80px":"30px"}`,
-          }}
-          onClick={() => {
-            mutator.mutateAsync({
-              page: page,
-              forQuery: "unfollow",
-              data: { username: username },
-            });
-          }}
-        >
-          UnFollow
-        </Button>
-      ) : (
-        showFollowButton&&<Button
-          variant="contained"
-          size={`${window.innerWidth>500}?"large":"small"`}
-          sx={{
-            backgroundColor: "#a72ef8",
-            color: "white",
-            fontWeight: "600",
-            fontSize:`${(window.innerWidth>500)?"medium":"small"}`,
-            width: `${(window.innerWidth>500)?"80px":"30px"}`,
-          }}
-          onClick={() => {
-            mutator.mutateAsync({
-              page: page,
-              forQuery: "follow",
-              data: { username: username },
-            });
-          }}
-        >
-          Follow
-        </Button>
-      )}
+      {isFollowing
+        ? showFollowButton && (
+            <Button
+              variant="contained"
+              size={`${window.innerWidth > 500}?"large":"small"`}
+              sx={{
+                backgroundColor: "#f82e9d",
+                color: "white",
+                fontWeight: "600",
+                fontSize: `${window.innerWidth > 500 ? "medium" : "small"}`,
+                width: `${window.innerWidth > 500 ? "80px" : "30px"}`,
+              }}
+              onClick={() => {
+                mutator.mutateAsync({
+                  page: page,
+                  forQuery: "unfollow",
+                  data: { username: username },
+                });
+              }}
+            >
+              UnFollow
+            </Button>
+          )
+        : showFollowButton && (
+            <Button
+              variant="contained"
+              size={`${window.innerWidth > 500}?"large":"small"`}
+              sx={{
+                backgroundColor: "#a72ef8",
+                color: "white",
+                fontWeight: "600",
+                fontSize: `${window.innerWidth > 500 ? "medium" : "small"}`,
+                width: `${window.innerWidth > 500 ? "80px" : "30px"}`,
+              }}
+              onClick={() => {
+                mutator.mutateAsync({
+                  page: page,
+                  forQuery: "follow",
+                  data: { username: username },
+                });
+              }}
+            >
+              Follow
+            </Button>
+          )}
     </div>
   );
 };
@@ -183,14 +205,17 @@ export default function FeedBox({
   setLikeOpen,
   setPostId,
   setPageOffset,
-  calculateVisited=true,
-  showFollowButton=true
+  calculateVisited = true,
+  showFollowButton = true,
 }) {
   let formatter = Intl.NumberFormat("en", { notation: "compact" });
   let boxShadow = "rgb(248,147,46)";
   const ref = useRef();
-  const postBoxRef=useRef();
-  const onScreen = useOnScreen(ref, "-200px");
+  const postBoxRef = useRef();
+  const onScreen = useOnScreen(
+    ref,
+    `${window.innerWidth > 500 ? "-200" : "-80"}`
+  );
   const [visited, setVisited] = useState(false);
   useEffect(() => {
     if (onScreen && !visited && calculateVisited) {
@@ -200,21 +225,25 @@ export default function FeedBox({
   }, [onScreen]);
 
   const onDownloadClick = useCallback(() => {
-    if (postBoxRef.current === null || postBoxRef.current===undefined) {
-      return
+    if (postBoxRef.current === null || postBoxRef.current === undefined) {
+      return;
     }
-    toPng(postBoxRef.current, { cacheBust: true})
+    toPng(postBoxRef.current, { cacheBust: true })
       .then((dataUrl) => {
-        const link = document.createElement('a')
-        link.download = `${userName}-${postId}.png`
-        link.href = dataUrl
-        link.click()
+        const link = document.createElement("a");
+        link.download = `${userName}-${postId}.png`;
+        link.href = dataUrl;
+        link.click();
       })
-      .catch((err) => {})
-  }, [postBoxRef])
+      .catch((err) => {});
+  }, [postBoxRef]);
 
   return (
-    <div className={` p-7 postBox:p-3 postBox:w-[225px] overflow-clip shadow-card w-fit mx-auto rounded-md my-4 transition-all`} ref={ref} id={postId}>
+    <div
+      className={` p-7 postBox:p-3 postBox:w-[225px] overflow-clip shadow-card w-fit mx-auto rounded-md my-4 transition-all`}
+      ref={ref}
+      id={postId}
+    >
       <UserViewer
         name={name}
         username={userName}
@@ -236,7 +265,7 @@ export default function FeedBox({
         direction="row"
         spacing="1"
         sx={{
-          margin: "4px 0"
+          margin: "4px 0",
         }}
       >
         <div>
@@ -253,7 +282,7 @@ export default function FeedBox({
                   data: { postId: postId },
                 });
               }}
-              onTextClick={()=>{
+              onTextClick={() => {
                 setPageOffset(window.pageYOffset);
                 setPostId(postId);
                 setLikeOpen(true);
@@ -272,7 +301,7 @@ export default function FeedBox({
                   data: { postId: postId },
                 });
               }}
-              onTextClick={()=>{
+              onTextClick={() => {
                 setPageOffset(window.pageYOffset);
                 setPostId(postId);
                 setLikeOpen(true);
@@ -285,10 +314,10 @@ export default function FeedBox({
             icon={<ChatBubbleOutlineOutlinedIcon color="" />}
             text={`${formatter.format(comments)}`}
             key={() => uuidv4()}
-            onClick={()=>{
-                setPageOffset(window.pageYOffset);
-                setPostId(postId);
-                setCommentOpen(true);
+            onClick={() => {
+              setPageOffset(window.pageYOffset);
+              setPostId(postId);
+              setCommentOpen(true);
             }}
           />
         </div>
@@ -296,7 +325,7 @@ export default function FeedBox({
           <ActionCard
             icon={<FileDownloadOutlinedIcon color="" />}
             key={() => uuidv4()}
-            onClick={()=>{
+            onClick={() => {
               onDownloadClick();
             }}
           />
@@ -304,7 +333,7 @@ export default function FeedBox({
       </Stack>
       <Stack
         direction="row"
-        sx={{ width: `${(+window.innerWidth>500)?"400px":"200px"}` }}
+        sx={{ width: `${+window.innerWidth > 500 ? "400px" : "200px"}` }}
         flexWrap={"wrap"}
         alignItems="center"
       >
@@ -324,7 +353,10 @@ export default function FeedBox({
           />
         ))}
       </Stack>
-      <Typography fontSize="0.8rem" sx={{ margin: "2px", marginLeft: "0.5rem" }}>
+      <Typography
+        fontSize="0.8rem"
+        sx={{ margin: "2px", marginLeft: "0.5rem" }}
+      >
         {moment(time).fromNow()}
       </Typography>
     </div>
