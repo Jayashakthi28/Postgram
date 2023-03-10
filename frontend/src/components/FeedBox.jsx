@@ -214,7 +214,7 @@ export default function FeedBox({
   const postBoxRef = useRef();
   const onScreen = useOnScreen(
     ref,
-    `${window.innerWidth > 500 ? "-200" : "-80"}`
+    `${window.innerWidth > 500 ? "-200px" : "-80px"}`
   );
   const [visited, setVisited] = useState(false);
   useEffect(() => {
